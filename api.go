@@ -49,3 +49,47 @@ func (nc *Client) BlockNumber() (blockHeight int, err error) {
 
 	return result, nil
 }
+
+// Consensus returns information on the current consensus state.
+func (nc *Client) Consensus() (consensus string, err error) {
+
+	// Make a new jsonrpc request
+	rpcReq := jsonrpc.NewRequest("consensus", nil, jsonrpc.NewID())
+
+	// Make jsonrpc call
+	rpcResp, err := nc.RawCall(rpcReq)
+	if err != nil {
+		return "", err
+	}
+
+	// Unmarshal result
+	var result string
+	err = json.Unmarshal(rpcResp.Result, &result)
+	if err != nil {
+		return "", ErrResultUnexpected
+	}
+
+	return result, nil
+}
+
+// CreateAccount creates a new account and stores its private key in the client store.
+func (nc *Client) CreateAccount() (wallet *Wallet, err error) {
+
+	// Make a new jsonrpc request
+	rpcReq := jsonrpc.NewRequest("createAccount", nil, jsonrpc.NewID())
+
+	// Make jsonrpc call
+	rpcResp, err := nc.RawCall(rpcReq)
+	if err != nil {
+		return nil, err
+	}
+
+	// Unmarshal result
+	var result Wallet
+	err = json.Unmarshal(rpcResp.Result, &result)
+	if err != nil {
+		return nil, ErrResultUnexpected
+	}
+
+	return &result, nil
+}
