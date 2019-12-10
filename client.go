@@ -26,8 +26,17 @@ var (
 
 // Client contains a Nimiq RPC client
 type Client struct {
-	Address   string
+
+	// Address is the address of the RPC server / Nimiq node
+	Address string
+
+	// Transport is used to handle HTTP requests to the RPC server
 	Transport http.RoundTripper
+
+	// Headers contains the headers that will be copied over to each
+	// JSON-RPC request. This allows to set custom headers for all requests
+	// handled by the client.
+	Headers http.Header
 }
 
 // NewClient returns a new Nimiq RPC client
@@ -46,6 +55,7 @@ func NewClient(address string) *Client {
 			TLSHandshakeTimeout:   8 * time.Second,
 			ExpectContinueTimeout: 1 * time.Second,
 		},
+		Headers: make(map[string][]string),
 	}
 }
 
@@ -66,8 +76,16 @@ func (nc *Client) RawCall(req *jsonrpc.Request) (resp *jsonrpc.Response, err err
 	if err != nil {
 		return nil, err
 	}
-	httpReq.Header.Set("Origin", "")
+
+	// Set Content-Type
 	httpReq.Header.Set("Content-Type", "application/json")
+
+	// Copy custom headers to request
+	for k, vv := range nc.Headers {
+		for _, v := range vv {
+			httpReq.Header.Add(k, v)
+		}
+	}
 
 	// Do the HTTP request
 	httpResp, err := nc.Transport.RoundTrip(httpReq)
