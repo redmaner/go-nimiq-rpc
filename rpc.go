@@ -14,23 +14,23 @@ var (
 
 	// ErrRPCParse is returned when an invalid JSON was received by the server.
 	// This is a standard error from the JSON-RPC 2.0 spec.
-	ErrRPCParse = errors.New("JSON-RPC: Invalid JSON was received by the server. An error occurred on the server while parsing the JSON text.")
+	ErrRPCParse = errors.New("JSON-RPC: Invalid JSON was received by the server. An error occurred on the server while parsing the JSON text")
 
 	// ErrRPCInvalidReq is returned when the JSON sent was not a valid request object.
 	// This is a standard error from the JSON-RPC 2.0 spec.
-	ErrRPCInvalidReq = errors.New("JSON-RPC: The JSON sent is not a valid Request object.")
+	ErrRPCInvalidReq = errors.New("JSON-RPC: The JSON sent is not a valid Request object")
 
 	// ErrRPCMethodNotFound is returned when the requested method does not exist or is not available on the server.
 	// This is a standard error from the JSON-RPC 2.0 spec.
-	ErrRPCMethodNotFound = errors.New("JSON-RPC: The method does not exist / is not available.")
+	ErrRPCMethodNotFound = errors.New("JSON-RPC: The method does not exist / is not available")
 
 	// ErrRPCInvalidParams is returned when the parameters for the requested method are invalid
 	// This is a standard error from the JSON-RPC 2.0 spec.
-	ErrRPCInvalidParams = errors.New("JSON-RPC: Invalid method parameter(s).")
+	ErrRPCInvalidParams = errors.New("JSON-RPC: Invalid method parameter(s)")
 
 	// ErrRPCInternal is returned when a internal error occured on the RPC server
 	// This is a standard error from the JSON-RPC 2.0 spec.
-	ErrRPCInternal = errors.New("JSON-RPC: Internal JSON-RPC error.")
+	ErrRPCInternal = errors.New("JSON-RPC: Internal JSON-RPC error")
 
 	// ErrRPCServer is returned when a server error occured.
 	// This is a standard error from the JSON-RPC 2.0 spec.
