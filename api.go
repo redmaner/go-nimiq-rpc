@@ -9,8 +9,7 @@ import (
 func (nc *Client) Accounts() (accounts []Account, err error) {
 
 	// Make a new jsonrpc request
-	ID := nc.idi.raise()
-	rpcReq := NewRPCRequest("accounts", nil, ID)
+	rpcReq := NewRPCRequest("accounts", nil)
 
 	// Make jsonrpc call
 	rpcResp, err := nc.RawCall(rpcReq)
@@ -32,8 +31,7 @@ func (nc *Client) Accounts() (accounts []Account, err error) {
 func (nc *Client) BlockNumber() (blockHeight int, err error) {
 
 	// Make a new jsonrpc request
-	ID := nc.idi.raise()
-	rpcReq := NewRPCRequest("blockNumber", nil, ID)
+	rpcReq := NewRPCRequest("blockNumber", nil)
 
 	// Make jsonrpc call
 	rpcResp, err := nc.RawCall(rpcReq)
@@ -55,8 +53,7 @@ func (nc *Client) BlockNumber() (blockHeight int, err error) {
 func (nc *Client) Consensus() (consensus string, err error) {
 
 	// Make a new jsonrpc request
-	ID := nc.idi.raise()
-	rpcReq := NewRPCRequest("consensus", nil, ID)
+	rpcReq := NewRPCRequest("consensus", nil)
 
 	// Make jsonrpc call
 	rpcResp, err := nc.RawCall(rpcReq)
@@ -78,8 +75,7 @@ func (nc *Client) Consensus() (consensus string, err error) {
 func (nc *Client) CreateAccount() (wallet *Wallet, err error) {
 
 	// Make a new jsonrpc request
-	ID := nc.idi.raise()
-	rpcReq := NewRPCRequest("createAccount", nil, ID)
+	rpcReq := NewRPCRequest("createAccount", nil)
 
 	// Make jsonrpc call
 	rpcResp, err := nc.RawCall(rpcReq)
@@ -102,8 +98,7 @@ func (nc *Client) CreateAccount() (wallet *Wallet, err error) {
 func (nc *Client) CreateRawTransaction(trn OutgoingTransaction) (transactionHex string, err error) {
 
 	// Make a new jsonrpc request
-	ID := nc.idi.raise()
-	rpcReq := NewRPCRequest("getAccount", trn, ID)
+	rpcReq := NewRPCRequest("getAccount", trn)
 
 	// Make jsonrpc call
 	rpcResp, err := nc.RawCall(rpcReq)
@@ -127,8 +122,7 @@ func (nc *Client) CreateRawTransaction(trn OutgoingTransaction) (transactionHex 
 func (nc *Client) GetAccount(address string) (account *Account, err error) {
 
 	// Make a new jsonrpc request
-	ID := nc.idi.raise()
-	rpcReq := NewRPCRequest("getAccount", address, ID)
+	rpcReq := NewRPCRequest("getAccount", address)
 
 	// Make jsonrpc call
 	rpcResp, err := nc.RawCall(rpcReq)

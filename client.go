@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"net"
 	"net/http"
@@ -79,13 +78,15 @@ func NewClient(address string) *Client {
 // RPC requests that are (not yet) implemented by the client.
 func (nc *Client) RawCall(req *RPCRequest) (resp *RPCResponse, err error) {
 
+	// ID
+	requestID := nc.idi.raise()
+	req.ID = requestID
+
 	// Marshall request to JSON
 	reqBody, err := json.Marshal(req)
 	if err != nil {
 		return nil, err
 	}
-
-	//fmt.Printf("JSON-RPC request body: %s\n", string(reqBody))
 
 	// Create a new HTTP request
 	httpReq, err := http.NewRequest("POST", nc.Address, bytes.NewBuffer(reqBody))
@@ -109,14 +110,15 @@ func (nc *Client) RawCall(req *RPCRequest) (resp *RPCResponse, err error) {
 		return nil, err
 	}
 
-	if httpResp.Body == nil {
-		return nil, ErrRespBodyEmpty
-	}
-
 	// Check status codes
 	switch httpResp.StatusCode {
 	case 403:
 		return nil, ErrUnauthorized
+	}
+
+	// Check if HTTP body exists
+	if httpResp.Body == nil {
+		return nil, ErrRespBodyEmpty
 	}
 
 	// Parse body
@@ -125,15 +127,16 @@ func (nc *Client) RawCall(req *RPCRequest) (resp *RPCResponse, err error) {
 		return nil, err
 	}
 
-	fmt.Printf("JSON-RPC response body: %s\n", string(bodyData))
-
 	// Unmarshall response
-	if resp == nil {
-		resp = &RPCResponse{}
-	}
+	resp = &RPCResponse{}
 	err = json.Unmarshal(bodyData, resp)
 	if err != nil {
 		return nil, err
+	}
+
+	// Validate ID match
+	if requestID != resp.ID {
+		return nil, ErrRPCIDMismatch
 	}
 
 	// Check for JSONRPC errors
