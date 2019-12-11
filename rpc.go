@@ -37,6 +37,40 @@ var (
 	ErrRPCServer = errors.New("JSON-RPC: Server error")
 )
 
+// RPCRequest represents a JSON-RPC 2.0 request object
+type RPCRequest struct {
+	JSONRPC string      `json:"jsonrpc,omitempty"`
+	Method  string      `json:"method,omitempty"`
+	Params  interface{} `json:"params,omitempty"`
+	ID      int         `json:"id,omitempty"`
+}
+
+// NewRPCRequest returns a new RPCRequest using the method and params as arguments
+func NewRPCRequest(method string, params interface{}) *RPCRequest {
+	return &RPCRequest{
+		JSONRPC: "2.0",
+		Method:  method,
+		Params:  params,
+	}
+}
+
+// RPCResponse represents a JSON-RPC 2.0 response object
+type RPCResponse struct {
+	JSONRPC string          `json:"jsonrpc,omitempty"`
+	Result  json.RawMessage `json:"result,omitempty"`
+	Error   RPCError        `json:"error,omitempty"`
+	ID      int             `json:"id,omitempty"`
+}
+
+// ParseRPCResponse can be used to parse a JSON-RPC 2.0 response object from a
+// raw slice of bytes.
+func ParseRPCResponse(data []byte, resp *RPCResponse) error {
+	if err := json.Unmarshal(data, resp); err != nil {
+		return err
+	}
+	return nil
+}
+
 // RPCError represents a JSON-RPC error object
 type RPCError struct {
 	Code    int    `json:"code,omitempty"`
@@ -64,39 +98,4 @@ func (re *RPCError) Parse() error {
 	default:
 		return nil
 	}
-}
-
-// RPCRequest represents a JSON-RPC 2.0 request object
-type RPCRequest struct {
-	JSONRPC string      `json:"jsonrpc,omitempty"`
-	Method  string      `json:"method,omitempty"`
-	Params  interface{} `json:"params,omitempty"`
-	ID      int         `json:"id,omitempty"`
-}
-
-// NewRPCRequest returns a new RPCRequest using the method, params and id as parameters
-func NewRPCRequest(method string, params interface{}, id int) *RPCRequest {
-	return &RPCRequest{
-		JSONRPC: "2.0",
-		Method:  method,
-		Params:  params,
-		ID:      id,
-	}
-}
-
-// RPCResponse represents a JSON-RPC 2.0 response object
-type RPCResponse struct {
-	JSONRPC string          `json:"jsonrpc,omitempty"`
-	Result  json.RawMessage `json:"result,omitempty"`
-	Error   RPCError        `json:"error,omitempty"`
-	ID      int             `json:"id,omitempty"`
-}
-
-// ParseRPCResponse can be used to parse a JSON-RPC 2.0 response object from a
-// raw slice of bytes.
-func ParseRPCResponse(data []byte, resp *RPCResponse) error {
-	if err := json.Unmarshal(data, resp); err != nil {
-		return err
-	}
-	return nil
 }
