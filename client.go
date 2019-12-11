@@ -4,12 +4,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net"
 	"net/http"
+	"sync"
 	"time"
-
-	"github.com/redmaner/go-nimiq-rpc/jsonrpc"
 )
 
 var (
@@ -37,6 +37,20 @@ type Client struct {
 	// JSON-RPC request. This allows to set custom headers for all requests
 	// handled by the client.
 	Headers http.Header
+
+	idi idIncrementor
+}
+
+type idIncrementor struct {
+	mu sync.Mutex
+	id int
+}
+
+func (idi *idIncrementor) raise() int {
+	idi.mu.Lock()
+	defer idi.mu.Unlock()
+	idi.id++
+	return idi.id
 }
 
 // NewClient returns a new Nimiq RPC client
@@ -63,13 +77,15 @@ func NewClient(address string) *Client {
 // to handle all the RPC functions provided by the client. Therefore this function
 // should generally not be used. It does however provide the functionality to do
 // RPC requests that are (not yet) implemented by the client.
-func (nc *Client) RawCall(req *jsonrpc.Request) (resp *jsonrpc.Response, err error) {
+func (nc *Client) RawCall(req *RPCRequest) (resp *RPCResponse, err error) {
 
 	// Marshall request to JSON
 	reqBody, err := json.Marshal(req)
 	if err != nil {
 		return nil, err
 	}
+
+	//fmt.Printf("JSON-RPC request body: %s\n", string(reqBody))
 
 	// Create a new HTTP request
 	httpReq, err := http.NewRequest("POST", nc.Address, bytes.NewBuffer(reqBody))
@@ -109,9 +125,11 @@ func (nc *Client) RawCall(req *jsonrpc.Request) (resp *jsonrpc.Response, err err
 		return nil, err
 	}
 
+	fmt.Printf("JSON-RPC response body: %s\n", string(bodyData))
+
 	// Unmarshall response
 	if resp == nil {
-		resp = &jsonrpc.Response{}
+		resp = &RPCResponse{}
 	}
 	err = json.Unmarshal(bodyData, resp)
 	if err != nil {

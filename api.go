@@ -2,15 +2,15 @@ package nimiqrpc
 
 import (
 	"encoding/json"
-
-	"github.com/redmaner/go-nimiq-rpc/jsonrpc"
+	"fmt"
 )
 
 // Accounts returns a list of addresses owned by client.
 func (nc *Client) Accounts() (accounts []Account, err error) {
 
 	// Make a new jsonrpc request
-	rpcReq := jsonrpc.NewRequest("accounts", nil, jsonrpc.NewID())
+	ID := nc.idi.raise()
+	rpcReq := NewRPCRequest("accounts", nil, ID)
 
 	// Make jsonrpc call
 	rpcResp, err := nc.RawCall(rpcReq)
@@ -32,7 +32,8 @@ func (nc *Client) Accounts() (accounts []Account, err error) {
 func (nc *Client) BlockNumber() (blockHeight int, err error) {
 
 	// Make a new jsonrpc request
-	rpcReq := jsonrpc.NewRequest("blockNumber", nil, jsonrpc.NewID())
+	ID := nc.idi.raise()
+	rpcReq := NewRPCRequest("blockNumber", nil, ID)
 
 	// Make jsonrpc call
 	rpcResp, err := nc.RawCall(rpcReq)
@@ -54,7 +55,8 @@ func (nc *Client) BlockNumber() (blockHeight int, err error) {
 func (nc *Client) Consensus() (consensus string, err error) {
 
 	// Make a new jsonrpc request
-	rpcReq := jsonrpc.NewRequest("consensus", nil, jsonrpc.NewID())
+	ID := nc.idi.raise()
+	rpcReq := NewRPCRequest("consensus", nil, ID)
 
 	// Make jsonrpc call
 	rpcResp, err := nc.RawCall(rpcReq)
@@ -76,7 +78,8 @@ func (nc *Client) Consensus() (consensus string, err error) {
 func (nc *Client) CreateAccount() (wallet *Wallet, err error) {
 
 	// Make a new jsonrpc request
-	rpcReq := jsonrpc.NewRequest("createAccount", nil, jsonrpc.NewID())
+	ID := nc.idi.raise()
+	rpcReq := NewRPCRequest("createAccount", nil, ID)
 
 	// Make jsonrpc call
 	rpcResp, err := nc.RawCall(rpcReq)
@@ -86,6 +89,55 @@ func (nc *Client) CreateAccount() (wallet *Wallet, err error) {
 
 	// Unmarshal result
 	var result Wallet
+	err = json.Unmarshal(rpcResp.Result, &result)
+	if err != nil {
+		return nil, ErrResultUnexpected
+	}
+
+	return &result, nil
+}
+
+// CreateRawTransaction creates and signs a transaction without sending it.
+// The transaction can then be send via sendRawTransaction without accidentally replaying it.
+func (nc *Client) CreateRawTransaction(trn OutgoingTransaction) (transactionHex string, err error) {
+
+	// Make a new jsonrpc request
+	ID := nc.idi.raise()
+	rpcReq := NewRPCRequest("getAccount", trn, ID)
+
+	// Make jsonrpc call
+	rpcResp, err := nc.RawCall(rpcReq)
+	if err != nil {
+		return "", err
+	}
+
+	fmt.Println(string(rpcResp.Result))
+
+	// Unmarshal result
+	var result string
+	err = json.Unmarshal(rpcResp.Result, &result)
+	if err != nil {
+		return "", err
+	}
+
+	return result, nil
+}
+
+// GetAccount returns details for the account of given address.
+func (nc *Client) GetAccount(address string) (account *Account, err error) {
+
+	// Make a new jsonrpc request
+	ID := nc.idi.raise()
+	rpcReq := NewRPCRequest("getAccount", address, ID)
+
+	// Make jsonrpc call
+	rpcResp, err := nc.RawCall(rpcReq)
+	if err != nil {
+		return nil, err
+	}
+
+	// Unmarshal result
+	var result Account
 	err = json.Unmarshal(rpcResp.Result, &result)
 	if err != nil {
 		return nil, ErrResultUnexpected
