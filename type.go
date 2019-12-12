@@ -172,22 +172,22 @@ type Transaction struct {
 type OutgoingTransaction struct {
 
 	// from: Address - The address the transaction is send from.
-	From AddressObject `json:"from,omitempty"`
+	From string `json:"from"`
 
 	// fromType: Integer - (optional, default: 0, Account.Type.BASIC) The account type at the given address (BASIC: 0, VESTING: 1, HTLC: 2).
 	FromType int `json:"fromType,omitempty"`
 
 	// to: Address - The address the transaction is directed to.
-	To AddressObject `json:"address,omitempty"`
+	To string `json:"to"`
 
 	// toType: Integer - (optional, default: 0, Account.Type.BASIC) The account type at the given address (BASIC: 0, VESTING: 1, HTLC: 2).
 	ToType int `json:"toType,omitempty"`
 
 	// value: Integer - Integer of the value (in smallest unit) sent with this transaction.
-	Value int `json:"value,omitempty"`
+	Value int `json:"value"`
 
 	// fee: Integer - Integer of the fee (in smallest unit) for this transaction.
-	Fee int `json:"fee,omitempty"`
+	Fee int `json:"fee"`
 
 	// data: String - (optional, default: null) Hex-encoded contract parameters or a message.
 	Data string `json:"data,omitempty"`

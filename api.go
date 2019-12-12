@@ -98,7 +98,7 @@ func (nc *Client) CreateAccount() (wallet *Wallet, err error) {
 func (nc *Client) CreateRawTransaction(trn OutgoingTransaction) (transactionHex string, err error) {
 
 	// Make a new jsonrpc request
-	rpcReq := NewRPCRequest("getAccount", trn)
+	rpcReq := NewRPCRequest("createRawTransaction", trn)
 
 	// Make jsonrpc call
 	rpcResp, err := nc.RawCall(rpcReq)
