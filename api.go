@@ -466,3 +466,69 @@ func (nc *Client) GetWork(params ...interface{}) (work *Work, err error) {
 
 	return &result, nil
 }
+
+// Hashrate returns the number of hashes per second that the node is mining with.
+func (nc *Client) Hashrate() (hashrate float64, err error) {
+
+	// Make a new jsonrpc request
+	rpcReq := NewRPCRequest("hashrate", nil)
+
+	// Make jsonrpc call
+	rpcResp, err := nc.RawCall(rpcReq)
+	if err != nil {
+		return 0, err
+	}
+
+	// Unmarshal result
+	var result float64
+	err = json.Unmarshal(rpcResp.Result, &result)
+	if err != nil {
+		return 0, ErrResultUnexpected
+	}
+
+	return result, nil
+}
+
+// Mining returns if client is actively mining new blocks.
+func (nc *Client) Mining() (status bool, err error) {
+
+	// Make a new jsonrpc request
+	rpcReq := NewRPCRequest("mining", nil)
+
+	// Make jsonrpc call
+	rpcResp, err := nc.RawCall(rpcReq)
+	if err != nil {
+		return false, err
+	}
+
+	// Unmarshal result
+	var result bool
+	err = json.Unmarshal(rpcResp.Result, &result)
+	if err != nil {
+		return false, ErrResultUnexpected
+	}
+
+	return result, nil
+}
+
+// PeerCount returns number of peers currently connected to the client.
+func (nc *Client) PeerCount() (peers int, err error) {
+
+	// Make a new jsonrpc request
+	rpcReq := NewRPCRequest("peerCount", nil)
+
+	// Make jsonrpc call
+	rpcResp, err := nc.RawCall(rpcReq)
+	if err != nil {
+		return 0, err
+	}
+
+	// Unmarshal result
+	var result int
+	err = json.Unmarshal(rpcResp.Result, &result)
+	if err != nil {
+		return 0, ErrResultUnexpected
+	}
+
+	return result, nil
+}
