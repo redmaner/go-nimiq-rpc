@@ -62,15 +62,6 @@ type RPCResponse struct {
 	ID      int             `json:"id,omitempty"`
 }
 
-// ParseRPCResponse can be used to parse a JSON-RPC 2.0 response object from a
-// raw slice of bytes.
-func ParseRPCResponse(data []byte, resp *RPCResponse) error {
-	if err := json.Unmarshal(data, resp); err != nil {
-		return err
-	}
-	return nil
-}
-
 // RPCError represents a JSON-RPC error object
 type RPCError struct {
 	Code    int    `json:"code,omitempty"`
