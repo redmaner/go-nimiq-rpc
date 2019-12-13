@@ -139,3 +139,25 @@ func (nc *Client) GetAccount(address string) (account *Account, err error) {
 
 	return &result, nil
 }
+
+// GetBalance returns the balance of the account of given address.
+func (nc *Client) GetBalance(address string) (balance Luna, err error) {
+
+	// Make a new jsonrpc request
+	rpcReq := NewRPCRequest("getBalance", address)
+
+	// Make jsonrpc call
+	rpcResp, err := nc.RawCall(rpcReq)
+	if err != nil {
+		return 0, err
+	}
+
+	// Unmarshal result
+	var result Luna
+	err = json.Unmarshal(rpcResp.Result, &result)
+	if err != nil {
+		return 0, ErrResultUnexpected
+	}
+
+	return result, nil
+}
