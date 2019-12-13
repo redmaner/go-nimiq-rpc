@@ -200,6 +200,28 @@ type Transaction struct {
 	Flags int `json:"flags,omitempty"`
 }
 
+// TransactionReceipt holds the details on a transaction receipt.
+type TransactionReceipt struct {
+
+	// transactionHash : String - Hex-encoded hash of the transaction.
+	TransactionHash string `json:"transactionHash,omitempty"`
+
+	// transactionIndex: Integer - Integer of the transactions index position in the block.
+	TransactionIndex int `json:"transactionIndex,omitempty"`
+
+	// blockHash: String - Hex-encoded hash of the block where this transaction was in.
+	BlockHash string `json:"blockHash,omitempty"`
+
+	// blockNumber: Integer - Block number where this transaction was in.
+	BlockNumber int `json:"blockNumber,omitempty"`
+
+	// confirmations: Integer - Number of confirmations for this transaction (number of blocks on top of the block where this transaction was in).
+	Confirmations int `json:"confirmations,omitempty"`
+
+	// timestamp: Integer - Timestamp of the block where this transaction was in.
+	Timestamp int `json:"timestamp,omitempty"`
+}
+
 // OutgoingTransaction holds the details on a transaction that is not yet sent.
 type OutgoingTransaction struct {
 
@@ -239,4 +261,20 @@ type Wallet struct {
 
 	// privateKey: String (optional) - Hex-encoded 32 byte Ed25519 private key.
 	PrivateKey string `json:"privateKey,omitempty"`
+}
+
+// Work holds the instructions to mine the next block
+type Work struct {
+
+	// data: String - Hex-encoded block header. This is what should be passed through the hash function. The last 4 bytes describe the nonce, the 4 bytes before are the current timestamp. Most implementations allow the miner to arbitrarily choose the nonce and to update the timestamp without requesting new work instructions.
+	Data string `json:"data,omitempty"`
+
+	// suffix: String - Hex-encoded block without the header. When passing a mining result to submitBlock, append the suffix to the data string with selected nonce.
+	Suffix string `json:"suffix,omitempty"`
+
+	// target: Integer - Compact form of the hash target to submit a block to this client.
+	Target int `json:"target,omitempty"`
+
+	// algorithm String - Field to describe the algorithm used to mine the block. Always nimiq-argon2 for now.
+	Algorithm string `json:"algorithm,omitempty"`
 }
