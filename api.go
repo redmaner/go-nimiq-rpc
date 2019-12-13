@@ -161,3 +161,83 @@ func (nc *Client) GetBalance(address string) (balance Luna, err error) {
 
 	return result, nil
 }
+
+// GetBlockByHash returns information about a block by block hash.
+// If fullTransactions is true it returns a block with the full transaction objects,
+// if false only the hashes of the transactions will be returned.
+func (nc *Client) GetBlockByHash(blockHash string, fullTransactions bool) (block *Block, err error) {
+
+	// Encapsulate parameters in a interface slice
+	var params []interface{}
+	params = append(params, blockHash)
+	params = append(params, fullTransactions)
+
+	// Make a new jsonrpc request
+	rpcReq := NewRPCRequest("getBlockByNumber", params)
+
+	// Make jsonrpc call
+	rpcResp, err := nc.RawCall(rpcReq)
+	if err != nil {
+		return nil, err
+	}
+
+	// Unmarshal result
+	var result Block
+	err = json.Unmarshal(rpcResp.Result, &result)
+	if err != nil {
+		return nil, ErrResultUnexpected
+	}
+
+	// Transaction result
+	switch {
+	case fullTransactions:
+		err = json.Unmarshal(result.Transactions, &result.TransactionsObjects)
+	default:
+		err = json.Unmarshal(result.Transactions, &result.TransactionsHashes)
+	}
+	if err != nil {
+		return nil, ErrResultUnexpected
+	}
+
+	return &result, nil
+}
+
+// GetBlockByNumber returns information about a block by block number.
+// If fullTransactions is true it returns a block with the full transaction objects,
+// if false only the hashes of the transactions will be returned.
+func (nc *Client) GetBlockByNumber(blockNumber int, fullTransactions bool) (block *Block, err error) {
+
+	// Encapsulate parameters in a interface slice
+	var params []interface{}
+	params = append(params, blockNumber)
+	params = append(params, fullTransactions)
+
+	// Make a new jsonrpc request
+	rpcReq := NewRPCRequest("getBlockByNumber", params)
+
+	// Make jsonrpc call
+	rpcResp, err := nc.RawCall(rpcReq)
+	if err != nil {
+		return nil, err
+	}
+
+	// Unmarshal result
+	var result Block
+	err = json.Unmarshal(rpcResp.Result, &result)
+	if err != nil {
+		return nil, ErrResultUnexpected
+	}
+
+	// Transaction result
+	switch {
+	case fullTransactions:
+		err = json.Unmarshal(result.Transactions, &result.TransactionsObjects)
+	default:
+		err = json.Unmarshal(result.Transactions, &result.TransactionsHashes)
+	}
+	if err != nil {
+		return nil, ErrResultUnexpected
+	}
+
+	return &result, nil
+}

@@ -1,5 +1,7 @@
 package nimiqrpc
 
+import "encoding/json"
+
 // 100000 Luna is 1 NIM
 // See https://www.nimiq.com/whitepaper/#nimiq-supply-distribution
 const lunaNimRate float64 = 100000.00000
@@ -139,7 +141,17 @@ type Block struct {
 	Timestamp int `json:"timestamp,omitempty"`
 
 	// transactions: Array - Array of transactions. Either represented by the transaction hash or a Transaction object.
-	Transactions []interface{} `json:"transactions,omitempty"`
+	// Because Transactions can either be a slice of strings or a slice of transactions,
+	// transactions will be unmarshalled in a raw JSON message so that the message can be
+	// unmarshalled into TransactionsHashes or TransactionsObjects depending on the data type.
+	// The functions that return a Block, will automatically fill either TransactionsHashes or TransactionsObjects
+	Transactions json.RawMessage `json:"transactions,omitempty"`
+
+	// transactionsHashes contains a slice of transactions represented by the transaction hash
+	TransactionsHashes []string
+
+	// transactionsObjects contains a slice of transactions represented by transation objects
+	TransactionsObjects []Transaction
 }
 
 // Transaction holds the details on a transaction
