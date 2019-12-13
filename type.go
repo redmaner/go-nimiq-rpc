@@ -1,5 +1,25 @@
 package nimiqrpc
 
+// 100000 Luna is 1 NIM
+// See https://www.nimiq.com/whitepaper/#nimiq-supply-distribution
+const lunaNimRate float64 = 100000.00000
+
+// NIM is the token transacted within Nimiq as a store and transfer of value: it acts as digital cash
+type NIM float64
+
+// ToLuna converts NIM to Luna
+func (n *NIM) ToLuna() Luna {
+	return Luna(float64(*n) * lunaNimRate)
+}
+
+// Luna is the smallest unit of NIM and 100’000 (1e5) Luna equals 1 NIM
+type Luna int64
+
+// ToNIM converts Luna to NIM
+func (l *Luna) ToNIM() NIM {
+	return NIM(float64(*l) / lunaNimRate)
+}
+
 // Account holds the details on an account
 type Account struct {
 
@@ -10,7 +30,7 @@ type Account struct {
 	Address string `json:"address,omitempty"`
 
 	// balance: Integer - Balance of the account (in smallest unit).
-	Balance int `json:"balance,omitempty"`
+	Balance Luna `json:"balance,omitempty"`
 
 	// type: Integer - The account type associated with the account (BASIC: 0, VESTING: 1, HTLC: 2).
 	Type int `json:"type,omitempty"`
