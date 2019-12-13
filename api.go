@@ -241,3 +241,49 @@ func (nc *Client) GetBlockByNumber(blockNumber int, fullTransactions bool) (bloc
 
 	return &result, nil
 }
+
+// TODO: IMPLEMENT function GetBlockTemplate
+
+// GetBlockTransactionCountByHash returns the number of transactions in a block from a block matching the given block hash.
+func (nc *Client) GetBlockTransactionCountByHash(blockHash string) (transactionCount int, err error) {
+
+	// Make a new jsonrpc request
+	rpcReq := NewRPCRequest("getBlockTransactionCountByHash", blockHash)
+
+	// Make jsonrpc call
+	rpcResp, err := nc.RawCall(rpcReq)
+	if err != nil {
+		return 0, err
+	}
+
+	// Unmarshal result
+	var result int
+	err = json.Unmarshal(rpcResp.Result, &result)
+	if err != nil {
+		return 0, ErrResultUnexpected
+	}
+
+	return result, nil
+}
+
+// GetBlockTransactionCountByNumber returns the number of transactions in a block from a block matching the given block number.
+func (nc *Client) GetBlockTransactionCountByNumber(blockNumber int) (transactionCount int, err error) {
+
+	// Make a new jsonrpc request
+	rpcReq := NewRPCRequest("getBlockTransactionCountByNumber", blockNumber)
+
+	// Make jsonrpc call
+	rpcResp, err := nc.RawCall(rpcReq)
+	if err != nil {
+		return 0, err
+	}
+
+	// Unmarshal result
+	var result int
+	err = json.Unmarshal(rpcResp.Result, &result)
+	if err != nil {
+		return 0, ErrResultUnexpected
+	}
+
+	return result, nil
+}
