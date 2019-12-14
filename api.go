@@ -106,8 +106,6 @@ func (nc *Client) CreateRawTransaction(trn OutgoingTransaction) (transactionHex 
 		return "", err
 	}
 
-	fmt.Println(string(rpcResp.Result))
-
 	// Unmarshal result
 	var result string
 	err = json.Unmarshal(rpcResp.Result, &result)
@@ -250,7 +248,33 @@ func (nc *Client) GetBlockByNumber(blockNumber int, fullTransactions bool) (bloc
 	return &result, nil
 }
 
-// TODO: IMPLEMENT function GetBlockTemplate
+// GetBlockTemplate returns a template to build the next block for mining.
+// This will consider pool instructions when connected to a pool.
+// Optional paramaters: (1) The address to use as a miner for this block.
+// This overrides the address provided during startup or from the pool.
+// and (2)  Hex-encoded value for the extra data field. This overrides the address
+// provided during startup or from the pool.
+func (nc *Client) GetBlockTemplate(params ...interface{}) (template *BlockTemplate, err error) {
+
+	// Make a new jsonrpc request
+	rpcReq := NewRPCRequest("getBlockTemplate", params)
+
+	// Make jsonrpc call
+	rpcResp, err := nc.RawCall(rpcReq)
+	if err != nil {
+		return nil, err
+	}
+
+	// Unmarshal result
+	var result BlockTemplate
+	err = json.Unmarshal(rpcResp.Result, &result)
+	if err != nil {
+		return nil, ErrResultUnexpected
+	}
+
+	return &result, nil
+
+}
 
 // GetBlockTransactionCountByHash returns the number of transactions in a block from a block matching the given block hash.
 func (nc *Client) GetBlockTransactionCountByHash(blockHash string) (transactionCount int, err error) {
@@ -489,6 +513,61 @@ func (nc *Client) Hashrate() (hashrate float64, err error) {
 	return result, nil
 }
 
+// Log sets the log level of the node.
+func (nc *Client) Log(tag string, level LogLevel) (succes bool, err error) {
+
+	// Encapsulate parameters in a interface slice
+	var params []interface{}
+	params = append(params, tag)
+	params = append(params, level)
+
+	// Make a new jsonrpc request
+	rpcReq := NewRPCRequest("log", params)
+
+	// Make jsonrpc call
+	rpcResp, err := nc.RawCall(rpcReq)
+	if err != nil {
+		return false, err
+	}
+
+	// Unmarshal result
+	var result bool
+	err = json.Unmarshal(rpcResp.Result, &result)
+	if err != nil {
+		return false, ErrResultUnexpected
+	}
+
+	return result, nil
+}
+
+// Mempool Returns information on the current mempool situation.
+// This will provide an overview of the number of transactions sorted into buckets
+// based on their fee per byte (in smallest unit).
+func (nc *Client) Mempool() (mempool *Mempool, err error) {
+
+	// Make a new jsonrpc request
+	rpcReq := NewRPCRequest("mempool", nil)
+
+	// Make jsonrpc call
+	rpcResp, err := nc.RawCall(rpcReq)
+	if err != nil {
+		return nil, err
+	}
+
+	// Unmarshal result
+	var result Mempool
+	err = json.Unmarshal(rpcResp.Result, &result)
+	if err != nil {
+		return nil, ErrResultUnexpected
+	}
+
+	if result.Total == 0 && len(result.Buckets) == 0 {
+		return nil, nil
+	}
+
+	return &result, nil
+}
+
 // Mining returns if client is actively mining new blocks.
 func (nc *Client) Mining() (status bool, err error) {
 
@@ -531,4 +610,94 @@ func (nc *Client) PeerCount() (peers int, err error) {
 	}
 
 	return result, nil
+}
+
+// SendRawTransaction sends a signed message call transaction or a contract creation, if the data field contains code.
+func (nc *Client) SendRawTransaction(signedTransaction string) (transactionHash string, err error) {
+
+	// Make a new jsonrpc request
+	rpcReq := NewRPCRequest("sendRawTransaction", signedTransaction)
+
+	// Make jsonrpc call
+	rpcResp, err := nc.RawCall(rpcReq)
+	if err != nil {
+		return "", err
+	}
+
+	// Unmarshal result
+	var result string
+	err = json.Unmarshal(rpcResp.Result, &result)
+	if err != nil {
+		return "", ErrResultUnexpected
+	}
+
+	return result, nil
+}
+
+// SendTransaction creates new message call transaction or a contract creation, if the data field contains code.
+func (nc *Client) SendTransaction(trn OutgoingTransaction) (transactionHash string, err error) {
+
+	// Make a new jsonrpc request
+	rpcReq := NewRPCRequest("sendTransaction", trn)
+
+	// Make jsonrpc call
+	rpcResp, err := nc.RawCall(rpcReq)
+	if err != nil {
+		return "", err
+	}
+
+	// Unmarshal result
+	var result string
+	err = json.Unmarshal(rpcResp.Result, &result)
+	if err != nil {
+		return "", err
+	}
+
+	return result, nil
+}
+
+// SubmitBlock submits a block to the node. When the block is valid, the node will forward it to other nodes in the network.
+// The argument is a hex-encoded full block (including header, interlink and body).
+// When submitting work from getWork, remember to include the suffix.
+func (nc *Client) SubmitBlock(fullBlock string) (err error) {
+
+	// Make a new jsonrpc request
+	rpcReq := NewRPCRequest("submitBlock", fullBlock)
+
+	// Make jsonrpc call
+	_, err = nc.RawCall(rpcReq)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Syncing returns whether the node is syncing and when it is syncing, data about the sync status.
+func (nc *Client) Syncing() (syncing bool, syncStatus *SyncStatus, err error) {
+
+	// Make a new jsonrpc request
+	rpcReq := NewRPCRequest("syncing", nil)
+
+	// Make jsonrpc call
+	rpcResp, err := nc.RawCall(rpcReq)
+	if err != nil {
+		return false, nil, err
+	}
+
+	// Unmarshal result
+	var result SyncStatus
+	err = json.Unmarshal(rpcResp.Result, &result)
+	if err != nil {
+
+		var boolResult bool
+		err = json.Unmarshal(rpcResp.Result, &boolResult)
+		if err != nil {
+			return false, nil, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
+		}
+
+		return false, nil, nil
+	}
+
+	return true, &result, nil
 }

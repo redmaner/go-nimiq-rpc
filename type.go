@@ -2,6 +2,19 @@ package nimiqrpc
 
 import "encoding/json"
 
+const (
+	LogLevelTrace   LogLevel = "trace"
+	LogLevelVerbose LogLevel = "verbose"
+	LogLevelDebug   LogLevel = "debug"
+	LogLevelInfo    LogLevel = "info"
+	LogLevelWarn    LogLevel = "warn"
+	LogLevelError   LogLevel = "error"
+	LogLevelAssert  LogLevel = "assert"
+)
+
+// LogLevel is de level of logging that is enabled on a node
+type LogLevel string
+
 // 100000 Luna is 1 NIM
 // See https://www.nimiq.com/whitepaper/#nimiq-supply-distribution
 const lunaNimRate float64 = 100000.00000
@@ -154,6 +167,89 @@ type Block struct {
 	TransactionsObjects []Transaction
 }
 
+// BlockTemplate contains details on a block template
+type BlockTemplate struct {
+
+	// Block header
+	Header struct {
+
+		// version: Integer - Version in block header.
+		Version int `json:"version,omitempty"`
+
+		// prevHash: String - 32-byte hex-encoded hash of the previous block.
+		PrevHash string `json:"prevHash,omitempty"`
+
+		// interlinkHash: String - 32-byte hex-encoded hash of the interlink.
+		InterlinkHash string `json:"interlinkHash,omitempty"`
+
+		// accountsHash: String - 32-byte hex-encoded hash of the accounts tree.
+		AccountHash string `json:"accountHash,omitempty"`
+
+		// nBits: Integer - Compact form of the hash target for this block.
+		NBits int `json:"nBits,omitempty"`
+
+		// height: Integer - Height of the block in the block chain (also known as block number).
+		Height int `json:"height,omitempty"`
+	} `json:"header,omitempty"`
+
+	// interlink: String - Hex-encoded interlink
+	Interlink string `json:"interlink,omitempty"`
+
+	// Block template body
+	Body struct {
+
+		// hash: String - 32-byte hex-encoded hash of the block body.
+		Hash string `json:"hash,omitempty"`
+
+		// minerAddr: String - 20-byte hex-encoded miner address.
+		MinerAddr string `json:"minerAddr,omitempty"`
+
+		// extraData: String - Hex-encoded value of the extra data field.
+		ExtraData string `json:"extraData,omitempty"`
+
+		// transactions: String[] - Array of hex-encoded transactions for this block.
+		Transactions []string `json:"transactions,omitempty"`
+
+		// prunedAccounts: String[] - Array of hex-encoded pruned accounts for this block.
+		PrunedAccounts []string `json:"prunedAccounts,omitempty"`
+
+		// merkleHashes: String[] - Array of hex-encoded hashes that verify the path of the miner
+		// address in the merkle tree. This can be used to change the miner address easily.
+		MerkleHashes []string `json:"merkleHashes,omitempty"`
+	} `json:"body,omitempty"`
+
+	// target: Integer - Compact form of the hash target to submit a block to this client.
+	Target int `json:"target,omitempty"`
+}
+
+// Mempool holds the details on a mempool.
+type Mempool struct {
+
+	//total: Integer - Total number of pending transactions in mempool.
+	Total int `json:"total,omitempty"`
+
+	// buckets Integer[] - Array containing a subset of fee per byte buckets from
+	// [10000, 5000, 2000, 1000, 500, 200, 100, 50, 20, 10, 5, 2, 1, 0]
+	// that currently have more than one transaction.
+	Buckets []int `json:"buckets,omitempty"`
+
+	// any of the numbers present in buckets: Integer - Number of transaction in the bucket.
+	// A transaction is assigned to the highest bucket of a value lower than its fee per byte value.
+	Bucket0    int `json:"0,omitempty"`
+	Bucket1    int `json:"1,omitempty"`
+	Bucket2    int `json:"2,omitempty"`
+	Bucket5    int `json:"5,omitempty"`
+	Bucket10   int `json:"10,omitempty"`
+	Bucket20   int `json:"20,omitempty"`
+	Bucket50   int `json:"50,omitempty"`
+	Bucket100  int `json:"100,omitempty"`
+	Bucket200  int `json:"200,omitempty"`
+	Bucket500  int `json:"500,omitempty"`
+	Bucket1000 int `json:"1000,omitempty"`
+	Bucket2000 int `json:"2000,omitempty"`
+	Bucket5000 int `json:"5000,omitempty"`
+}
+
 // Transaction holds the details on a transaction
 type Transaction struct {
 
@@ -245,6 +341,19 @@ type OutgoingTransaction struct {
 
 	// data: String - (optional, default: null) Hex-encoded contract parameters or a message.
 	Data string `json:"data,omitempty"`
+}
+
+// SyncStatus holds information about the sync status.
+type SyncStatus struct {
+
+	// startingBlock: Integer - The block at which the import started (will only be reset, after the sync reached his head)
+	StartingBlock int `json:"startingBlock,omitempty"`
+
+	// currentBlock: Integer - The current block, same as blockNumber
+	CurrentBlock int `json:"currentBlock,omitempty"`
+
+	// highestBlock: Integer - The estimated highest block
+	HighestBlock int `json:"highestBlock,omitempty"`
 }
 
 // Wallet holds the details on a wallet.
