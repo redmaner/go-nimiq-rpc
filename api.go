@@ -22,10 +22,10 @@ import (
 // Accounts returns a list of addresses owned by client.
 func (nc *Client) Accounts() (accounts []Account, err error) {
 
-	// Make a new jsonrpc request
+	// Make a new JSON-RPC request
 	rpcReq := NewRPCRequest("accounts", nil)
 
-	// Make jsonrpc call
+	// Make JSON-RPC call
 	rpcResp, err := nc.RawCall(rpcReq)
 	if err != nil {
 		return []Account{}, err
@@ -35,7 +35,7 @@ func (nc *Client) Accounts() (accounts []Account, err error) {
 	var result []Account
 	err = json.Unmarshal(rpcResp.Result, &result)
 	if err != nil {
-		return []Account{}, ErrResultUnexpected
+		return []Account{}, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
 
 	return result, nil
@@ -44,10 +44,10 @@ func (nc *Client) Accounts() (accounts []Account, err error) {
 // BlockNumber returns the height of most recent block.
 func (nc *Client) BlockNumber() (blockHeight int, err error) {
 
-	// Make a new jsonrpc request
+	// Make a new JSON-RPC request
 	rpcReq := NewRPCRequest("blockNumber", nil)
 
-	// Make jsonrpc call
+	// Make JSON-RPC call
 	rpcResp, err := nc.RawCall(rpcReq)
 	if err != nil {
 		return 0, err
@@ -57,7 +57,7 @@ func (nc *Client) BlockNumber() (blockHeight int, err error) {
 	var result int
 	err = json.Unmarshal(rpcResp.Result, &result)
 	if err != nil {
-		return 0, ErrResultUnexpected
+		return 0, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
 
 	return result, nil
@@ -66,10 +66,10 @@ func (nc *Client) BlockNumber() (blockHeight int, err error) {
 // Consensus returns information on the current consensus state.
 func (nc *Client) Consensus() (consensus string, err error) {
 
-	// Make a new jsonrpc request
+	// Make a new JSON-RPC request
 	rpcReq := NewRPCRequest("consensus", nil)
 
-	// Make jsonrpc call
+	// Make JSON-RPC call
 	rpcResp, err := nc.RawCall(rpcReq)
 	if err != nil {
 		return "", err
@@ -79,7 +79,7 @@ func (nc *Client) Consensus() (consensus string, err error) {
 	var result string
 	err = json.Unmarshal(rpcResp.Result, &result)
 	if err != nil {
-		return "", ErrResultUnexpected
+		return "", fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
 
 	return result, nil
@@ -88,10 +88,10 @@ func (nc *Client) Consensus() (consensus string, err error) {
 // CreateAccount creates a new account and stores its private key in the client store.
 func (nc *Client) CreateAccount() (wallet *Wallet, err error) {
 
-	// Make a new jsonrpc request
+	// Make a new JSON-RPC request
 	rpcReq := NewRPCRequest("createAccount", nil)
 
-	// Make jsonrpc call
+	// Make JSON-RPC call
 	rpcResp, err := nc.RawCall(rpcReq)
 	if err != nil {
 		return nil, err
@@ -101,7 +101,7 @@ func (nc *Client) CreateAccount() (wallet *Wallet, err error) {
 	var result Wallet
 	err = json.Unmarshal(rpcResp.Result, &result)
 	if err != nil {
-		return nil, ErrResultUnexpected
+		return nil, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
 
 	return &result, nil
@@ -111,10 +111,10 @@ func (nc *Client) CreateAccount() (wallet *Wallet, err error) {
 // The transaction can then be send via sendRawTransaction without accidentally replaying it.
 func (nc *Client) CreateRawTransaction(trn OutgoingTransaction) (transactionHex string, err error) {
 
-	// Make a new jsonrpc request
+	// Make a new JSON-RPC request
 	rpcReq := NewRPCRequest("createRawTransaction", trn)
 
-	// Make jsonrpc call
+	// Make JSON-RPC call
 	rpcResp, err := nc.RawCall(rpcReq)
 	if err != nil {
 		return "", err
@@ -133,10 +133,10 @@ func (nc *Client) CreateRawTransaction(trn OutgoingTransaction) (transactionHex 
 // GetAccount returns details for the account of given address.
 func (nc *Client) GetAccount(address string) (account *Account, err error) {
 
-	// Make a new jsonrpc request
+	// Make a new JSON-RPC request
 	rpcReq := NewRPCRequest("getAccount", address)
 
-	// Make jsonrpc call
+	// Make JSON-RPC call
 	rpcResp, err := nc.RawCall(rpcReq)
 	if err != nil {
 		return nil, err
@@ -146,7 +146,7 @@ func (nc *Client) GetAccount(address string) (account *Account, err error) {
 	var result Account
 	err = json.Unmarshal(rpcResp.Result, &result)
 	if err != nil {
-		return nil, ErrResultUnexpected
+		return nil, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
 
 	return &result, nil
@@ -155,10 +155,10 @@ func (nc *Client) GetAccount(address string) (account *Account, err error) {
 // GetBalance returns the balance of the account of given address.
 func (nc *Client) GetBalance(address string) (balance Luna, err error) {
 
-	// Make a new jsonrpc request
+	// Make a new JSON-RPC request
 	rpcReq := NewRPCRequest("getBalance", address)
 
-	// Make jsonrpc call
+	// Make JSON-RPC call
 	rpcResp, err := nc.RawCall(rpcReq)
 	if err != nil {
 		return 0, err
@@ -168,7 +168,7 @@ func (nc *Client) GetBalance(address string) (balance Luna, err error) {
 	var result Luna
 	err = json.Unmarshal(rpcResp.Result, &result)
 	if err != nil {
-		return 0, ErrResultUnexpected
+		return 0, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
 
 	return result, nil
@@ -184,10 +184,10 @@ func (nc *Client) GetBlockByHash(blockHash string, fullTransactions bool) (block
 	params = append(params, blockHash)
 	params = append(params, fullTransactions)
 
-	// Make a new jsonrpc request
+	// Make a new JSON-RPC request
 	rpcReq := NewRPCRequest("getBlockByNumber", params)
 
-	// Make jsonrpc call
+	// Make JSON-RPC call
 	rpcResp, err := nc.RawCall(rpcReq)
 	if err != nil {
 		return nil, err
@@ -197,7 +197,7 @@ func (nc *Client) GetBlockByHash(blockHash string, fullTransactions bool) (block
 	var result Block
 	err = json.Unmarshal(rpcResp.Result, &result)
 	if err != nil {
-		return nil, ErrResultUnexpected
+		return nil, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
 
 	if result.Hash == "" {
@@ -212,7 +212,7 @@ func (nc *Client) GetBlockByHash(blockHash string, fullTransactions bool) (block
 		err = json.Unmarshal(result.Transactions, &result.TransactionsHashes)
 	}
 	if err != nil {
-		return nil, ErrResultUnexpected
+		return nil, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
 
 	return &result, nil
@@ -228,10 +228,10 @@ func (nc *Client) GetBlockByNumber(blockNumber int, fullTransactions bool) (bloc
 	params = append(params, blockNumber)
 	params = append(params, fullTransactions)
 
-	// Make a new jsonrpc request
+	// Make a new JSON-RPC request
 	rpcReq := NewRPCRequest("getBlockByNumber", params)
 
-	// Make jsonrpc call
+	// Make JSON-RPC call
 	rpcResp, err := nc.RawCall(rpcReq)
 	if err != nil {
 		return nil, err
@@ -241,7 +241,7 @@ func (nc *Client) GetBlockByNumber(blockNumber int, fullTransactions bool) (bloc
 	var result Block
 	err = json.Unmarshal(rpcResp.Result, &result)
 	if err != nil {
-		return nil, ErrResultUnexpected
+		return nil, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
 
 	if result.Hash == "" {
@@ -256,7 +256,7 @@ func (nc *Client) GetBlockByNumber(blockNumber int, fullTransactions bool) (bloc
 		err = json.Unmarshal(result.Transactions, &result.TransactionsHashes)
 	}
 	if err != nil {
-		return nil, ErrResultUnexpected
+		return nil, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
 
 	return &result, nil
@@ -270,10 +270,10 @@ func (nc *Client) GetBlockByNumber(blockNumber int, fullTransactions bool) (bloc
 // provided during startup or from the pool.
 func (nc *Client) GetBlockTemplate(params ...interface{}) (template *BlockTemplate, err error) {
 
-	// Make a new jsonrpc request
+	// Make a new JSON-RPC request
 	rpcReq := NewRPCRequest("getBlockTemplate", params)
 
-	// Make jsonrpc call
+	// Make JSON-RPC call
 	rpcResp, err := nc.RawCall(rpcReq)
 	if err != nil {
 		return nil, err
@@ -283,7 +283,7 @@ func (nc *Client) GetBlockTemplate(params ...interface{}) (template *BlockTempla
 	var result BlockTemplate
 	err = json.Unmarshal(rpcResp.Result, &result)
 	if err != nil {
-		return nil, ErrResultUnexpected
+		return nil, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
 
 	return &result, nil
@@ -293,10 +293,10 @@ func (nc *Client) GetBlockTemplate(params ...interface{}) (template *BlockTempla
 // GetBlockTransactionCountByHash returns the number of transactions in a block from a block matching the given block hash.
 func (nc *Client) GetBlockTransactionCountByHash(blockHash string) (transactionCount int, err error) {
 
-	// Make a new jsonrpc request
+	// Make a new JSON-RPC request
 	rpcReq := NewRPCRequest("getBlockTransactionCountByHash", blockHash)
 
-	// Make jsonrpc call
+	// Make JSON-RPC call
 	rpcResp, err := nc.RawCall(rpcReq)
 	if err != nil {
 		return 0, err
@@ -306,7 +306,7 @@ func (nc *Client) GetBlockTransactionCountByHash(blockHash string) (transactionC
 	var result int
 	err = json.Unmarshal(rpcResp.Result, &result)
 	if err != nil {
-		return 0, ErrResultUnexpected
+		return 0, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
 
 	return result, nil
@@ -315,10 +315,10 @@ func (nc *Client) GetBlockTransactionCountByHash(blockHash string) (transactionC
 // GetBlockTransactionCountByNumber returns the number of transactions in a block from a block matching the given block number.
 func (nc *Client) GetBlockTransactionCountByNumber(blockNumber int) (transactionCount int, err error) {
 
-	// Make a new jsonrpc request
+	// Make a new JSON-RPC request
 	rpcReq := NewRPCRequest("getBlockTransactionCountByNumber", blockNumber)
 
-	// Make jsonrpc call
+	// Make JSON-RPC call
 	rpcResp, err := nc.RawCall(rpcReq)
 	if err != nil {
 		return 0, err
@@ -328,7 +328,7 @@ func (nc *Client) GetBlockTransactionCountByNumber(blockNumber int) (transaction
 	var result int
 	err = json.Unmarshal(rpcResp.Result, &result)
 	if err != nil {
-		return 0, ErrResultUnexpected
+		return 0, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
 
 	return result, nil
@@ -342,10 +342,10 @@ func (nc *Client) GetTransactionByBlockHashAndIndex(blockHash string, index int)
 	params = append(params, blockHash)
 	params = append(params, index)
 
-	// Make a new jsonrpc request
+	// Make a new JSON-RPC request
 	rpcReq := NewRPCRequest("getTransactionByBlockHashAndIndex", params)
 
-	// Make jsonrpc call
+	// Make JSON-RPC call
 	rpcResp, err := nc.RawCall(rpcReq)
 	if err != nil {
 		return nil, err
@@ -355,7 +355,7 @@ func (nc *Client) GetTransactionByBlockHashAndIndex(blockHash string, index int)
 	var result Transaction
 	err = json.Unmarshal(rpcResp.Result, &result)
 	if err != nil {
-		return nil, ErrResultUnexpected
+		return nil, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
 
 	if result.Hash == "" {
@@ -373,10 +373,10 @@ func (nc *Client) GetTransactionByBlockNumberAndIndex(blockNumber int, index int
 	params = append(params, blockNumber)
 	params = append(params, index)
 
-	// Make a new jsonrpc request
+	// Make a new JSON-RPC request
 	rpcReq := NewRPCRequest("getTransactionByBlockNumberAndIndex", params)
 
-	// Make jsonrpc call
+	// Make JSON-RPC call
 	rpcResp, err := nc.RawCall(rpcReq)
 	if err != nil {
 		return nil, err
@@ -386,7 +386,7 @@ func (nc *Client) GetTransactionByBlockNumberAndIndex(blockNumber int, index int
 	var result Transaction
 	err = json.Unmarshal(rpcResp.Result, &result)
 	if err != nil {
-		return nil, ErrResultUnexpected
+		return nil, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
 
 	if result.Hash == "" {
@@ -399,10 +399,10 @@ func (nc *Client) GetTransactionByBlockNumberAndIndex(blockNumber int, index int
 // GetTransactionByHash Returns the information about a transaction requested by transaction hash.
 func (nc *Client) GetTransactionByHash(transactionHash string) (transaction *Transaction, err error) {
 
-	// Make a new jsonrpc request
+	// Make a new JSON-RPC request
 	rpcReq := NewRPCRequest("getTransactionByHash", transactionHash)
 
-	// Make jsonrpc call
+	// Make JSON-RPC call
 	rpcResp, err := nc.RawCall(rpcReq)
 	if err != nil {
 		return nil, err
@@ -412,7 +412,7 @@ func (nc *Client) GetTransactionByHash(transactionHash string) (transaction *Tra
 	var result Transaction
 	err = json.Unmarshal(rpcResp.Result, &result)
 	if err != nil {
-		return nil, ErrResultUnexpected
+		return nil, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
 
 	if result.Hash == "" {
@@ -425,10 +425,10 @@ func (nc *Client) GetTransactionByHash(transactionHash string) (transaction *Tra
 // GetTransactionReceipt returns the receipt of a transaction by transaction hash.
 func (nc *Client) GetTransactionReceipt(transactionHash string) (transactionReceipt *TransactionReceipt, err error) {
 
-	// Make a new jsonrpc request
+	// Make a new JSON-RPC request
 	rpcReq := NewRPCRequest("getTransactionReceipt", transactionHash)
 
-	// Make jsonrpc call
+	// Make JSON-RPC call
 	rpcResp, err := nc.RawCall(rpcReq)
 	if err != nil {
 		return nil, err
@@ -438,7 +438,7 @@ func (nc *Client) GetTransactionReceipt(transactionHash string) (transactionRece
 	var result TransactionReceipt
 	err = json.Unmarshal(rpcResp.Result, &result)
 	if err != nil {
-		return nil, ErrResultUnexpected
+		return nil, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
 
 	if result.TransactionHash == "" {
@@ -458,10 +458,10 @@ func (nc *Client) GetTransactionsByAddress(address string, maxEntries int) (tran
 	params = append(params, address)
 	params = append(params, maxEntries)
 
-	// Make a new jsonrpc request
+	// Make a new JSON-RPC request
 	rpcReq := NewRPCRequest("getTransactionsByAddress", params)
 
-	// Make jsonrpc call
+	// Make JSON-RPC call
 	rpcResp, err := nc.RawCall(rpcReq)
 	if err != nil {
 		return nil, err
@@ -471,7 +471,7 @@ func (nc *Client) GetTransactionsByAddress(address string, maxEntries int) (tran
 	var result []Transaction
 	err = json.Unmarshal(rpcResp.Result, &result)
 	if err != nil {
-		return nil, ErrResultUnexpected
+		return nil, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
 
 	return result, nil
@@ -482,10 +482,10 @@ func (nc *Client) GetTransactionsByAddress(address string, maxEntries int) (tran
 // and (2) Hex-encoded value for the extra data field. This overrides the address provided during startup or from the pool
 func (nc *Client) GetWork(params ...interface{}) (work *Work, err error) {
 
-	// Make a new jsonrpc request
+	// Make a new JSON-RPC request
 	rpcReq := NewRPCRequest("getWork", params)
 
-	// Make jsonrpc call
+	// Make JSON-RPC call
 	rpcResp, err := nc.RawCall(rpcReq)
 	if err != nil {
 		return nil, err
@@ -495,7 +495,7 @@ func (nc *Client) GetWork(params ...interface{}) (work *Work, err error) {
 	var result Work
 	err = json.Unmarshal(rpcResp.Result, &result)
 	if err != nil {
-		return nil, ErrResultUnexpected
+		return nil, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
 
 	if result.Data == "" {
@@ -508,10 +508,10 @@ func (nc *Client) GetWork(params ...interface{}) (work *Work, err error) {
 // Hashrate returns the number of hashes per second that the node is mining with.
 func (nc *Client) Hashrate() (hashrate float64, err error) {
 
-	// Make a new jsonrpc request
+	// Make a new JSON-RPC request
 	rpcReq := NewRPCRequest("hashrate", nil)
 
-	// Make jsonrpc call
+	// Make JSON-RPC call
 	rpcResp, err := nc.RawCall(rpcReq)
 	if err != nil {
 		return 0, err
@@ -521,7 +521,7 @@ func (nc *Client) Hashrate() (hashrate float64, err error) {
 	var result float64
 	err = json.Unmarshal(rpcResp.Result, &result)
 	if err != nil {
-		return 0, ErrResultUnexpected
+		return 0, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
 
 	return result, nil
@@ -535,10 +535,10 @@ func (nc *Client) Log(tag string, level LogLevel) (succes bool, err error) {
 	params = append(params, tag)
 	params = append(params, level)
 
-	// Make a new jsonrpc request
+	// Make a new JSON-RPC request
 	rpcReq := NewRPCRequest("log", params)
 
-	// Make jsonrpc call
+	// Make JSON-RPC call
 	rpcResp, err := nc.RawCall(rpcReq)
 	if err != nil {
 		return false, err
@@ -548,7 +548,7 @@ func (nc *Client) Log(tag string, level LogLevel) (succes bool, err error) {
 	var result bool
 	err = json.Unmarshal(rpcResp.Result, &result)
 	if err != nil {
-		return false, ErrResultUnexpected
+		return false, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
 
 	return result, nil
@@ -559,10 +559,10 @@ func (nc *Client) Log(tag string, level LogLevel) (succes bool, err error) {
 // based on their fee per byte (in smallest unit).
 func (nc *Client) Mempool() (mempool *Mempool, err error) {
 
-	// Make a new jsonrpc request
+	// Make a new JSON-RPC request
 	rpcReq := NewRPCRequest("mempool", nil)
 
-	// Make jsonrpc call
+	// Make JSON-RPC call
 	rpcResp, err := nc.RawCall(rpcReq)
 	if err != nil {
 		return nil, err
@@ -572,7 +572,7 @@ func (nc *Client) Mempool() (mempool *Mempool, err error) {
 	var result Mempool
 	err = json.Unmarshal(rpcResp.Result, &result)
 	if err != nil {
-		return nil, ErrResultUnexpected
+		return nil, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
 
 	if result.Total == 0 && len(result.Buckets) == 0 {
@@ -585,10 +585,10 @@ func (nc *Client) Mempool() (mempool *Mempool, err error) {
 // Mining returns if client is actively mining new blocks.
 func (nc *Client) Mining() (status bool, err error) {
 
-	// Make a new jsonrpc request
+	// Make a new JSON-RPC request
 	rpcReq := NewRPCRequest("mining", nil)
 
-	// Make jsonrpc call
+	// Make JSON-RPC call
 	rpcResp, err := nc.RawCall(rpcReq)
 	if err != nil {
 		return false, err
@@ -598,7 +598,7 @@ func (nc *Client) Mining() (status bool, err error) {
 	var result bool
 	err = json.Unmarshal(rpcResp.Result, &result)
 	if err != nil {
-		return false, ErrResultUnexpected
+		return false, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
 
 	return result, nil
@@ -607,10 +607,10 @@ func (nc *Client) Mining() (status bool, err error) {
 // PeerCount returns number of peers currently connected to the client.
 func (nc *Client) PeerCount() (peers int, err error) {
 
-	// Make a new jsonrpc request
+	// Make a new JSON-RPC request
 	rpcReq := NewRPCRequest("peerCount", nil)
 
-	// Make jsonrpc call
+	// Make JSON-RPC call
 	rpcResp, err := nc.RawCall(rpcReq)
 	if err != nil {
 		return 0, err
@@ -620,7 +620,7 @@ func (nc *Client) PeerCount() (peers int, err error) {
 	var result int
 	err = json.Unmarshal(rpcResp.Result, &result)
 	if err != nil {
-		return 0, ErrResultUnexpected
+		return 0, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
 
 	return result, nil
@@ -629,10 +629,10 @@ func (nc *Client) PeerCount() (peers int, err error) {
 // SendRawTransaction sends a signed message call transaction or a contract creation, if the data field contains code.
 func (nc *Client) SendRawTransaction(signedTransaction string) (transactionHash string, err error) {
 
-	// Make a new jsonrpc request
+	// Make a new JSON-RPC request
 	rpcReq := NewRPCRequest("sendRawTransaction", signedTransaction)
 
-	// Make jsonrpc call
+	// Make JSON-RPC call
 	rpcResp, err := nc.RawCall(rpcReq)
 	if err != nil {
 		return "", err
@@ -642,7 +642,7 @@ func (nc *Client) SendRawTransaction(signedTransaction string) (transactionHash 
 	var result string
 	err = json.Unmarshal(rpcResp.Result, &result)
 	if err != nil {
-		return "", ErrResultUnexpected
+		return "", fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
 
 	return result, nil
@@ -651,10 +651,10 @@ func (nc *Client) SendRawTransaction(signedTransaction string) (transactionHash 
 // SendTransaction creates new message call transaction or a contract creation, if the data field contains code.
 func (nc *Client) SendTransaction(trn OutgoingTransaction) (transactionHash string, err error) {
 
-	// Make a new jsonrpc request
+	// Make a new JSON-RPC request
 	rpcReq := NewRPCRequest("sendTransaction", trn)
 
-	// Make jsonrpc call
+	// Make JSON-RPC call
 	rpcResp, err := nc.RawCall(rpcReq)
 	if err != nil {
 		return "", err
@@ -675,10 +675,10 @@ func (nc *Client) SendTransaction(trn OutgoingTransaction) (transactionHash stri
 // When submitting work from getWork, remember to include the suffix.
 func (nc *Client) SubmitBlock(fullBlock string) (err error) {
 
-	// Make a new jsonrpc request
+	// Make a new JSON-RPC request
 	rpcReq := NewRPCRequest("submitBlock", fullBlock)
 
-	// Make jsonrpc call
+	// Make JSON-RPC call
 	_, err = nc.RawCall(rpcReq)
 	if err != nil {
 		return err
@@ -690,10 +690,10 @@ func (nc *Client) SubmitBlock(fullBlock string) (err error) {
 // Syncing returns whether the node is syncing and when it is syncing, data about the sync status.
 func (nc *Client) Syncing() (syncing bool, syncStatus *SyncStatus, err error) {
 
-	// Make a new jsonrpc request
+	// Make a new JSON-RPC request
 	rpcReq := NewRPCRequest("syncing", nil)
 
-	// Make jsonrpc call
+	// Make JSON-RPC call
 	rpcResp, err := nc.RawCall(rpcReq)
 	if err != nil {
 		return false, nil, err
