@@ -264,7 +264,7 @@ func (nc *Client) GetBlockByNumber(blockNumber int, fullTransactions bool) (bloc
 
 // GetBlockTemplate returns a template to build the next block for mining.
 // This will consider pool instructions when connected to a pool.
-// Optional paramaters: (1) The address to use as a miner for this block.
+// Optional parameters: (1) The address to use as a miner for this block.
 // This overrides the address provided during startup or from the pool.
 // and (2)  Hex-encoded value for the extra data field. This overrides the address
 // provided during startup or from the pool.

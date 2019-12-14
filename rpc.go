@@ -42,11 +42,11 @@ var (
 	// This is a standard error from the JSON-RPC 2.0 spec.
 	ErrRPCInvalidParams = errors.New("JSON-RPC: Invalid method parameter(s)")
 
-	// ErrRPCInternal is returned when a internal error occured on the RPC server
+	// ErrRPCInternal is returned when a internal error occurred on the RPC server
 	// This is a standard error from the JSON-RPC 2.0 spec.
 	ErrRPCInternal = errors.New("JSON-RPC: Internal JSON-RPC error")
 
-	// ErrRPCServer is returned when a server error occured.
+	// ErrRPCServer is returned when a server error occurred.
 	// This is a standard error from the JSON-RPC 2.0 spec.
 	ErrRPCServer = errors.New("JSON-RPC: Server error")
 )

@@ -17,13 +17,27 @@ package nimiqrpc
 import "encoding/json"
 
 const (
-	LogLevelTrace   LogLevel = "trace"
+
+	// LogLevelTrace represents the trace log level
+	LogLevelTrace LogLevel = "trace"
+
+	// LogLevelVerbose represents the verbose log level
 	LogLevelVerbose LogLevel = "verbose"
-	LogLevelDebug   LogLevel = "debug"
-	LogLevelInfo    LogLevel = "info"
-	LogLevelWarn    LogLevel = "warn"
-	LogLevelError   LogLevel = "error"
-	LogLevelAssert  LogLevel = "assert"
+
+	// LogLevelDebug represents the debug log level
+	LogLevelDebug LogLevel = "debug"
+
+	// LogLevelInfo represents the info log level
+	LogLevelInfo LogLevel = "info"
+
+	// LogLevelWarn represents the warn log level
+	LogLevelWarn LogLevel = "warn"
+
+	// LogLevelError represents the error log level
+	LogLevelError LogLevel = "error"
+
+	// LogLevelAssert represents the assert log level
+	LogLevelAssert LogLevel = "assert"
 )
 
 // LogLevel is de level of logging that is enabled on a node
@@ -177,7 +191,7 @@ type Block struct {
 	// transactionsHashes contains a slice of transactions represented by the transaction hash
 	TransactionsHashes []string
 
-	// transactionsObjects contains a slice of transactions represented by transation objects
+	// transactionsObjects contains a slice of transactions represented by transaction objects
 	TransactionsObjects []Transaction
 }
 
