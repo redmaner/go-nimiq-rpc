@@ -1,5 +1,3 @@
-package nimiqrpc
-
 // Copyright 2019 Jake "redmaner" van der Putten.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,6 +13,7 @@ package nimiqrpc
 // limitations under the License.
 
 /*
+
 Package nimiqrpc provides a Nimiq RPC client library in GO.
 
 This client library uses the JSON-RPC protocol and implements the Nimiq RPC specification
@@ -36,3 +35,4 @@ How to use this package:
   fmt.Printf("Balance: %v\n", balance)
 
 */
+package nimiqrpc
