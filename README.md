@@ -10,7 +10,7 @@ A blockchain technology inspired by Bitcoin but designed to run in your browser.
 See [the Nimiq website](https://nimiq.com) for more information.
 
 ### How to use this library?
-See the full documentation on [GoDoc](https://godoc.org/github.com/redmaner/go-nimiq-rpc)<br>
+This library is fully Go module compatible. See the full documentation on [GoDoc](https://godoc.org/github.com/redmaner/go-nimiq-rpc)<br>
 For examples, see the example folder of this repository.
 
 ### Contributing
