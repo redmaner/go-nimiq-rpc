@@ -626,6 +626,57 @@ func (nc *Client) PeerCount() (peers int, err error) {
 	return result, nil
 }
 
+// PeerList returns a list of peers currently connected to the client
+func (nc *Client) PeerList() (peers []Peer, err error) {
+
+	// Make a new JSON-RPC request
+	rpcReq := NewRPCRequest("peerList", nil)
+
+	// Make JSON-RPC call
+	rpcResp, err := nc.RawCall(rpcReq)
+	if err != nil {
+		return []Peer{}, err
+	}
+
+	// Unmarshal result
+	var result []Peer
+	err = json.Unmarshal(rpcResp.Result, &result)
+	if err != nil {
+		return []Peer{}, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
+	}
+
+	return result, nil
+}
+
+// PeerState returns the state for the given peer address. If update is set, the state
+// of the peer will be set to the given update parameter
+func (nc *Client) PeerState(peerAddress string, update ...string) (peer *Peer, err error) {
+	params := []interface{}{peerAddress}
+	if len(update) > 0 {
+		if update[0] == "ban" || update[0] == "unban" || update[0] == "connect" || update[0] == "disconnect" {
+			params = append(params, update[0])
+		}
+	}
+
+	// Make a new JSON-RPC request
+	rpcReq := NewRPCRequest("peerState", params)
+
+	// Make JSON-RPC call
+	rpcResp, err := nc.RawCall(rpcReq)
+	if err != nil {
+		return nil, err
+	}
+
+	// Unmarshal result
+	var result Peer
+	err = json.Unmarshal(rpcResp.Result, &result)
+	if err != nil {
+		return nil, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
+	}
+
+	return &result, nil
+}
+
 // SendRawTransaction sends a signed message call transaction or a contract creation, if the data field contains code.
 func (nc *Client) SendRawTransaction(signedTransaction string) (transactionHash string, err error) {
 

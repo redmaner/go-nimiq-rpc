@@ -278,6 +278,20 @@ type Mempool struct {
 	Bucket5000 int `json:"5000,omitempty"`
 }
 
+// Peer holds the details of a peer
+type Peer struct {
+	ID              string `json:"id,omitempty"`
+	Address         string `json:"address,omitempty"`
+	AddressState    int    `json:"addressState,omitempty"`
+	ConnectionState int    `json:"connectionState,omitempty"`
+	Version         int    `json:"version,omitempty"`
+	TimeOffset      int    `json:"timeOffset,omitempty"`
+	HeadHash        string `json:"headHash,omitempty"`
+	Latency         int    `json:"latency,omitempty"`
+	RX              int    `json:"rx,omitempty"`
+	TX              int    `json:"tx,omitempty"`
+}
+
 // Transaction holds the details on a transaction
 type Transaction struct {
 
