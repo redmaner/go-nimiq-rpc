@@ -16,8 +16,10 @@ package nimiqrpc
 
 import (
 	"bytes"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net"
 	"net/http"
@@ -35,6 +37,9 @@ var (
 
 	// ErrUnauthorized is returned when the user is not authorized to call the function
 	ErrUnauthorized = errors.New("Unauthorized to do the request")
+
+	// ErrNotAuthenticated is returned when the user is required to be authenticated
+	ErrNotAuthenticated = errors.New("RPC call requires authentication")
 )
 
 // Client contains a Nimiq RPC client
@@ -86,6 +91,20 @@ func NewClient(address string) *Client {
 	}
 }
 
+// NewClientWithAuth returns a RPC client with the given username and password set for
+// authentication
+func NewClientWithAuth(address, username, password string) *Client {
+	cl := NewClient(address)
+	cl.Authenticate(username, password)
+	return cl
+}
+
+// Authenticate can be used to set a username and password that is used to authenticate
+// to the RPC server
+func (nc *Client) Authenticate(username, password string) {
+	nc.Headers.Set("Authorization", fmt.Sprintf("Basic %s", base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%s:%s", username, password)))))
+}
+
 // RawCall can be used to send a raw JSON-RPC request. This function is used internally
 // to handle all the RPC functions provided by the client. Therefore this function
 // should generally not be used. It does however provide the functionality to do
@@ -126,6 +145,8 @@ func (nc *Client) RawCall(req *RPCRequest) (resp *RPCResponse, err error) {
 
 	// Check status codes
 	switch httpResp.StatusCode {
+	case 401:
+		return nil, ErrNotAuthenticated
 	case 403:
 		return nil, ErrUnauthorized
 	}
