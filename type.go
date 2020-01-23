@@ -14,7 +14,11 @@
 
 package nimiqrpc
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"strconv"
+	"strings"
+)
 
 // Available LogLevels
 const (
@@ -37,24 +41,59 @@ const (
 // LogLevel is the level of logging that is enabled on a node
 type LogLevel string
 
-// 100000 Luna is 1 NIM
-// See https://www.nimiq.com/whitepaper/#nimiq-supply-distribution
-const lunaNimRate float64 = 100000.00000
-
 // NIM is the token transacted within Nimiq as a store and transfer of value: it acts as digital cash
-type NIM float64
+type NIM string
+
+// FormatNIM is a function to format Luna to NIM
+func FormatNIM(l Luna) NIM {
+	nimString := strconv.Itoa(int(l))
+	for i := len(nimString); i < 5; i++ {
+		nimString = "0" + nimString
+	}
+
+	switch {
+	case len(nimString) == 5:
+		nimString = "0." + nimString
+	case len(nimString) > 5:
+		nimString = nimString[0:len(nimString)-5] + "." + nimString[len(nimString)-5:]
+	}
+
+	if nimString[len(nimString)-5:] == "00000" {
+		return NIM(nimString[:len(nimString)-6])
+	}
+	return NIM(nimString)
+}
 
 // ToLuna converts NIM to Luna
-func (n *NIM) ToLuna() Luna {
-	return Luna(float64(*n) * lunaNimRate)
+func (n *NIM) ToLuna() (Luna, error) {
+	return FormatLuna(*n)
 }
 
 // Luna is the smallest unit of NIM and 100’000 (1e5) Luna equals 1 NIM
 type Luna int64
 
+// FormatLuna is a function to format NIM to Luna
+func FormatLuna(n NIM) (Luna, error) {
+	nimString := string(n)
+	dotIndex := strings.Index(nimString, ".")
+	switch {
+	case dotIndex == -1:
+		nimString = nimString + "00000"
+	default:
+		nimString = nimString[:dotIndex] + nimString[dotIndex+1:]
+	}
+
+	luna, err := strconv.Atoi(nimString)
+	if err != nil {
+		return 0, err
+	}
+
+	return Luna(luna), nil
+}
+
 // ToNIM converts Luna to NIM
 func (l *Luna) ToNIM() NIM {
-	return NIM(float64(*l) / lunaNimRate)
+	return FormatNIM(*l)
 }
 
 // Account holds the details on an account
