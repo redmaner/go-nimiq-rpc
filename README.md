@@ -11,7 +11,6 @@ See [the Nimiq website](https://nimiq.com) for more information.
 
 ### How to use this library?
 This library is fully Go module compatible. See the full documentation on [GoDoc](https://godoc.org/github.com/redmaner/go-nimiq-rpc)<br>
-For examples, see the example folder of this repository.
 
 ### Contributing
 Questions or issues can be filled in the issue tracker.
