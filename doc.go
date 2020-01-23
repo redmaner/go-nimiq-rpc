@@ -14,7 +14,7 @@
 
 /*
 
-Package nimiqrpc provides a Nimiq RPC client library in GO.
+Package nimiqrpc provides a Nimiq RPC client library in Go.
 
 This client library uses the JSON-RPC protocol and implements the Nimiq RPC specification
 Which can be found here: https://github.com/nimiq/core-js/wiki/JSON-RPC-API#remotejs-client
@@ -23,15 +23,13 @@ This package provides a Client and all the necessary types to interact with the 
 How to use this package:
 
   // Initialise a new client
-  nimiqClient := NewClient("address.to.nimiqnode.com")
+  nimiqClient := nimiqrpc.NewClient("address.to.nimiqnode.com")
 
   // Do an RPC call. For example retrieve the balance of a Nimiq account:
   balance, err := nimiqClient.GetBalance("NQ52 V4BF 52J3 0PM6 BG4M 9QY1 RUYS UAL6 CJD2")
   if err != nil {
-    // Do your error handling here
+      panic(err)
   }
-
-  // Do something with the response. In this case we print the balance
   fmt.Printf("Balance: %v\n", balance)
 
 */
