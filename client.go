@@ -61,9 +61,35 @@ func NewClientWithAuth(address, username, password string) *Client {
 }
 
 // Call can be used to send a JSON-RPC request by setting the method and the parameters.
+//
 // This function is used internally to handle all the RPC functions provided by the client.
 // Therefore this function should generally not be used. It does however provide the functionality to do
 // RPC requests that are (not yet) implemented by this client.
+//
+// This function returns a *jsonrpc.RPCResponse. Please see the documentation for more information
+// on how to unmarshall this RPCResponse. https://godoc.org/github.com/ybbus/jsonrpc#RPCResponse
 func (nc *Client) Call(method string, params interface{}) (*jsonrpc.RPCResponse, error) {
 	return nc.rpcClient.Call(method, params)
+}
+
+// CallBatch invokes a list of RPCRequests in a single batch request. This function is for more
+// advanced use cases.
+//
+// Most convenient is to use the following form:
+// CallBatch(
+//   NewRequest("hashrate"),
+//   NewRequest("accounts"),
+// })
+//
+// Returns jsonrpc.RPCResponses that is of type []*jsonrpc.RPCResponse
+// - note that a list of RPCResponses can be received unordered so it can happen that: responses[i] != responses[i].ID
+// - RPCPersponses is enriched with helper functions e.g.: responses.HasError() returns  true if one of the responses holds an RPCError
+// Please see the documenation on how to handle jsonrpc.RPCResonses: https://godoc.org/github.com/ybbus/jsonrpc#RPCResponses
+func (nc *Client) CallBatch(reqs ...*jsonrpc.RPCRequest) (jsonrpc.RPCResponses, error) {
+	return nc.rpcClient.CallBatch(jsonrpc.RPCRequests(reqs))
+}
+
+// NewRequest returns a *jsonrpc.RPCRequest that can be used as a parameter to the CallBatch function.
+func NewRequest(method string, params ...interface{}) *jsonrpc.RPCRequest {
+	return jsonrpc.NewRequest(method, params)
 }
