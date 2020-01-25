@@ -26,14 +26,12 @@ func (nc *Client) Accounts() (accounts []Account, err error) {
 		return nil, err
 	}
 
-	// Unmarshal result
-	var result []Account
-	err = rpcResp.GetObject(&result)
+	err = rpcResp.GetObject(&accounts)
 	if err != nil {
 		return nil, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
 
-	return result, nil
+	return
 }
 
 // BlockNumber returns the height of most recent block.
@@ -43,14 +41,12 @@ func (nc *Client) BlockNumber() (blockHeight int, err error) {
 		return 0, err
 	}
 
-	// Unmarshal result
-	var result int
-	err = rpcResp.GetObject(&result)
+	err = rpcResp.GetObject(&blockHeight)
 	if err != nil {
 		return 0, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
 
-	return result, nil
+	return
 }
 
 // Consensus returns information on the current consensus state.
@@ -60,14 +56,12 @@ func (nc *Client) Consensus() (consensus string, err error) {
 		return "", err
 	}
 
-	// Unmarshal result
-	var result string
-	err = rpcResp.GetObject(&result)
+	err = rpcResp.GetObject(&consensus)
 	if err != nil {
 		return "", fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
 
-	return result, nil
+	return
 }
 
 // CreateAccount creates a new account and stores its private key in the client store.
@@ -95,14 +89,12 @@ func (nc *Client) CreateRawTransaction(trn OutgoingTransaction) (transactionHex 
 		return "", err
 	}
 
-	// Unmarshal result
-	var result string
-	err = rpcResp.GetObject(&result)
+	err = rpcResp.GetObject(&transactionHex)
 	if err != nil {
 		return "", err
 	}
 
-	return result, nil
+	return
 }
 
 // GetAccount returns details for the account of given address.
@@ -129,14 +121,12 @@ func (nc *Client) GetBalance(address string) (balance Luna, err error) {
 		return 0, err
 	}
 
-	// Unmarshal result
-	var result Luna
-	err = rpcResp.GetObject(&result)
+	err = rpcResp.GetObject(&balance)
 	if err != nil {
 		return 0, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
 
-	return result, nil
+	return
 }
 
 // GetBlockByHash returns information about a block by block hash.
@@ -240,14 +230,12 @@ func (nc *Client) GetBlockTransactionCountByHash(blockHash string) (transactionC
 		return 0, err
 	}
 
-	// Unmarshal result
-	var result int
-	err = rpcResp.GetObject(&result)
+	err = rpcResp.GetObject(&transactionCount)
 	if err != nil {
 		return 0, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
 
-	return result, nil
+	return
 }
 
 // GetBlockTransactionCountByNumber returns the number of transactions in a block from a block matching the given block number.
@@ -257,14 +245,12 @@ func (nc *Client) GetBlockTransactionCountByNumber(blockNumber int) (transaction
 		return 0, err
 	}
 
-	// Unmarshal result
-	var result int
-	err = rpcResp.GetObject(&result)
+	err = rpcResp.GetObject(&transactionCount)
 	if err != nil {
 		return 0, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
 
-	return result, nil
+	return
 }
 
 // GetTransactionByBlockHashAndIndex returns information about a transaction by block hash and transaction index position.
@@ -366,14 +352,12 @@ func (nc *Client) GetTransactionsByAddress(address string, maxEntries int) (tran
 		return nil, err
 	}
 
-	// Unmarshal result
-	var result []Transaction
-	err = rpcResp.GetObject(&result)
+	err = rpcResp.GetObject(&transactions)
 	if err != nil {
 		return nil, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
 
-	return result, nil
+	return
 }
 
 // GetWork returns instructions to mine the next block. This will consider pool instructions when connected to a pool.
@@ -406,14 +390,12 @@ func (nc *Client) Hashrate() (hashrate float64, err error) {
 		return 0, err
 	}
 
-	// Unmarshal result
-	var result float64
-	err = rpcResp.GetObject(&result)
+	err = rpcResp.GetObject(&hashrate)
 	if err != nil {
 		return 0, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
 
-	return result, nil
+	return
 }
 
 // Log sets the log level of the node.
@@ -425,14 +407,12 @@ func (nc *Client) Log(tag string, level LogLevel) (succes bool, err error) {
 		return false, err
 	}
 
-	// Unmarshal result
-	var result bool
-	err = rpcResp.GetObject(&result)
+	err = rpcResp.GetObject(&succes)
 	if err != nil {
 		return false, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
 
-	return result, nil
+	return
 }
 
 // Mempool Returns information on the current mempool situation.
@@ -465,14 +445,12 @@ func (nc *Client) Mining() (status bool, err error) {
 		return false, err
 	}
 
-	// Unmarshal result
-	var result bool
-	err = rpcResp.GetObject(&result)
+	err = rpcResp.GetObject(&status)
 	if err != nil {
 		return false, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
 
-	return result, nil
+	return
 }
 
 // PeerCount returns number of peers currently connected to the client.
@@ -482,14 +460,12 @@ func (nc *Client) PeerCount() (peers int, err error) {
 		return 0, err
 	}
 
-	// Unmarshal result
-	var result int
-	err = rpcResp.GetObject(&result)
+	err = rpcResp.GetObject(&peers)
 	if err != nil {
 		return 0, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
 
-	return result, nil
+	return
 }
 
 // PeerList returns a list of peers currently connected to the client
@@ -499,14 +475,12 @@ func (nc *Client) PeerList() (peers []Peer, err error) {
 		return []Peer{}, err
 	}
 
-	// Unmarshal result
-	var result []Peer
-	err = rpcResp.GetObject(&result)
+	err = rpcResp.GetObject(&peers)
 	if err != nil {
 		return []Peer{}, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
 
-	return result, nil
+	return
 }
 
 // PeerState returns the state for the given peer address. If update is set, the state
@@ -540,14 +514,12 @@ func (nc *Client) SendRawTransaction(signedTransaction string) (transactionHash 
 		return "", err
 	}
 
-	// Unmarshal result
-	var result string
-	err = rpcResp.GetObject(&result)
+	err = rpcResp.GetObject(&transactionHash)
 	if err != nil {
 		return "", fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
 
-	return result, nil
+	return
 }
 
 // SendTransaction creates new message call transaction or a contract creation, if the data field contains code.
@@ -558,6 +530,9 @@ func (nc *Client) SendTransaction(trn OutgoingTransaction) (transactionHash stri
 	}
 
 	err = rpcResp.GetObject(&transactionHash)
+	if err != nil {
+		return "", fmt.Errorf("%v: %v", ErrResultUnexpected, err)
+	}
 	return
 }
 
