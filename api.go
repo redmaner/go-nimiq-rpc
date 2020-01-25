@@ -21,14 +21,14 @@ import (
 
 // Accounts returns a list of addresses owned by client.
 func (nc *Client) Accounts() (accounts []Account, err error) {
-	rpcResp, err := nc.RawCall(NewRPCRequest("accounts", nil))
+	rpcResp, err := nc.Call("accounts", nil)
 	if err != nil {
 		return nil, err
 	}
 
 	// Unmarshal result
 	var result []Account
-	err = json.Unmarshal(rpcResp.Result, &result)
+	err = rpcResp.GetObject(&result)
 	if err != nil {
 		return nil, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
@@ -38,14 +38,14 @@ func (nc *Client) Accounts() (accounts []Account, err error) {
 
 // BlockNumber returns the height of most recent block.
 func (nc *Client) BlockNumber() (blockHeight int, err error) {
-	rpcResp, err := nc.RawCall(NewRPCRequest("blockNumber", nil))
+	rpcResp, err := nc.Call("blockNumber", nil)
 	if err != nil {
 		return 0, err
 	}
 
 	// Unmarshal result
 	var result int
-	err = json.Unmarshal(rpcResp.Result, &result)
+	err = rpcResp.GetObject(&result)
 	if err != nil {
 		return 0, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
@@ -55,14 +55,14 @@ func (nc *Client) BlockNumber() (blockHeight int, err error) {
 
 // Consensus returns information on the current consensus state.
 func (nc *Client) Consensus() (consensus string, err error) {
-	rpcResp, err := nc.RawCall(NewRPCRequest("consensus", nil))
+	rpcResp, err := nc.Call("consensus", nil)
 	if err != nil {
 		return "", err
 	}
 
 	// Unmarshal result
 	var result string
-	err = json.Unmarshal(rpcResp.Result, &result)
+	err = rpcResp.GetObject(&result)
 	if err != nil {
 		return "", fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
@@ -72,14 +72,14 @@ func (nc *Client) Consensus() (consensus string, err error) {
 
 // CreateAccount creates a new account and stores its private key in the client store.
 func (nc *Client) CreateAccount() (wallet *Wallet, err error) {
-	rpcResp, err := nc.RawCall(NewRPCRequest("createAccount", nil))
+	rpcResp, err := nc.Call("createAccount", nil)
 	if err != nil {
 		return nil, err
 	}
 
 	// Unmarshal result
 	var result Wallet
-	err = json.Unmarshal(rpcResp.Result, &result)
+	err = rpcResp.GetObject(&result)
 	if err != nil {
 		return nil, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
@@ -90,14 +90,14 @@ func (nc *Client) CreateAccount() (wallet *Wallet, err error) {
 // CreateRawTransaction creates and signs a transaction without sending it.
 // The transaction can then be send via sendRawTransaction without accidentally replaying it.
 func (nc *Client) CreateRawTransaction(trn OutgoingTransaction) (transactionHex string, err error) {
-	rpcResp, err := nc.RawCall(NewRPCRequest("createRawTransaction", trn))
+	rpcResp, err := nc.Call("createRawTransaction", trn)
 	if err != nil {
 		return "", err
 	}
 
 	// Unmarshal result
 	var result string
-	err = json.Unmarshal(rpcResp.Result, &result)
+	err = rpcResp.GetObject(&result)
 	if err != nil {
 		return "", err
 	}
@@ -107,14 +107,14 @@ func (nc *Client) CreateRawTransaction(trn OutgoingTransaction) (transactionHex 
 
 // GetAccount returns details for the account of given address.
 func (nc *Client) GetAccount(address string) (account *Account, err error) {
-	rpcResp, err := nc.RawCall(NewRPCRequest("getAccount", address))
+	rpcResp, err := nc.Call("getAccount", address)
 	if err != nil {
 		return nil, err
 	}
 
 	// Unmarshal result
 	var result Account
-	err = json.Unmarshal(rpcResp.Result, &result)
+	err = rpcResp.GetObject(&result)
 	if err != nil {
 		return nil, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
@@ -124,14 +124,14 @@ func (nc *Client) GetAccount(address string) (account *Account, err error) {
 
 // GetBalance returns the balance of the account of given address.
 func (nc *Client) GetBalance(address string) (balance Luna, err error) {
-	rpcResp, err := nc.RawCall(NewRPCRequest("getBalance", address))
+	rpcResp, err := nc.Call("getBalance", address)
 	if err != nil {
 		return 0, err
 	}
 
 	// Unmarshal result
 	var result Luna
-	err = json.Unmarshal(rpcResp.Result, &result)
+	err = rpcResp.GetObject(&result)
 	if err != nil {
 		return 0, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
@@ -143,16 +143,16 @@ func (nc *Client) GetBalance(address string) (balance Luna, err error) {
 // If fullTransactions is true it returns a block with the full transaction objects,
 // if false only the hashes of the transactions will be returned.
 func (nc *Client) GetBlockByHash(blockHash string, fullTransactions bool) (block *Block, err error) {
-	rpcResp, err := nc.RawCall(NewRPCRequest("getBlockByNumber", []interface{}{
+	rpcResp, err := nc.Call("getBlockByNumber", []interface{}{
 		blockHash, fullTransactions,
-	}))
+	})
 	if err != nil {
 		return nil, err
 	}
 
 	// Unmarshal result
 	var result Block
-	err = json.Unmarshal(rpcResp.Result, &result)
+	err = rpcResp.GetObject(&result)
 	if err != nil {
 		return nil, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
@@ -179,16 +179,16 @@ func (nc *Client) GetBlockByHash(blockHash string, fullTransactions bool) (block
 // If fullTransactions is true it returns a block with the full transaction objects,
 // if false only the hashes of the transactions will be returned.
 func (nc *Client) GetBlockByNumber(blockNumber int, fullTransactions bool) (block *Block, err error) {
-	rpcResp, err := nc.RawCall(NewRPCRequest("getBlockByNumber", []interface{}{
+	rpcResp, err := nc.Call("getBlockByNumber", []interface{}{
 		blockNumber, fullTransactions,
-	}))
+	})
 	if err != nil {
 		return nil, err
 	}
 
 	// Unmarshal result
 	var result Block
-	err = json.Unmarshal(rpcResp.Result, &result)
+	err = rpcResp.GetObject(&result)
 	if err != nil {
 		return nil, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
@@ -218,14 +218,14 @@ func (nc *Client) GetBlockByNumber(blockNumber int, fullTransactions bool) (bloc
 // and (2)  Hex-encoded value for the extra data field. This overrides the address
 // provided during startup or from the pool.
 func (nc *Client) GetBlockTemplate(params ...interface{}) (template *BlockTemplate, err error) {
-	rpcResp, err := nc.RawCall(NewRPCRequest("getBlockTemplate", params))
+	rpcResp, err := nc.Call("getBlockTemplate", params)
 	if err != nil {
 		return nil, err
 	}
 
 	// Unmarshal result
 	var result BlockTemplate
-	err = json.Unmarshal(rpcResp.Result, &result)
+	err = rpcResp.GetObject(&result)
 	if err != nil {
 		return nil, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
@@ -235,14 +235,14 @@ func (nc *Client) GetBlockTemplate(params ...interface{}) (template *BlockTempla
 
 // GetBlockTransactionCountByHash returns the number of transactions in a block from a block matching the given block hash.
 func (nc *Client) GetBlockTransactionCountByHash(blockHash string) (transactionCount int, err error) {
-	rpcResp, err := nc.RawCall(NewRPCRequest("getBlockTransactionCountByHash", blockHash))
+	rpcResp, err := nc.Call("getBlockTransactionCountByHash", blockHash)
 	if err != nil {
 		return 0, err
 	}
 
 	// Unmarshal result
 	var result int
-	err = json.Unmarshal(rpcResp.Result, &result)
+	err = rpcResp.GetObject(&result)
 	if err != nil {
 		return 0, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
@@ -252,14 +252,14 @@ func (nc *Client) GetBlockTransactionCountByHash(blockHash string) (transactionC
 
 // GetBlockTransactionCountByNumber returns the number of transactions in a block from a block matching the given block number.
 func (nc *Client) GetBlockTransactionCountByNumber(blockNumber int) (transactionCount int, err error) {
-	rpcResp, err := nc.RawCall(NewRPCRequest("getBlockTransactionCountByNumber", blockNumber))
+	rpcResp, err := nc.Call("getBlockTransactionCountByNumber", blockNumber)
 	if err != nil {
 		return 0, err
 	}
 
 	// Unmarshal result
 	var result int
-	err = json.Unmarshal(rpcResp.Result, &result)
+	err = rpcResp.GetObject(&result)
 	if err != nil {
 		return 0, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
@@ -269,19 +269,16 @@ func (nc *Client) GetBlockTransactionCountByNumber(blockNumber int) (transaction
 
 // GetTransactionByBlockHashAndIndex returns information about a transaction by block hash and transaction index position.
 func (nc *Client) GetTransactionByBlockHashAndIndex(blockHash string, index int) (transaction *Transaction, err error) {
-	rpcReq := NewRPCRequest("getTransactionByBlockHashAndIndex", []interface{}{
+	rpcResp, err := nc.Call("getTransactionByBlockHashAndIndex", []interface{}{
 		blockHash, index,
 	})
-
-	// Make JSON-RPC call
-	rpcResp, err := nc.RawCall(rpcReq)
 	if err != nil {
 		return nil, err
 	}
 
 	// Unmarshal result
 	var result Transaction
-	err = json.Unmarshal(rpcResp.Result, &result)
+	err = rpcResp.GetObject(&result)
 	if err != nil {
 		return nil, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
@@ -295,19 +292,16 @@ func (nc *Client) GetTransactionByBlockHashAndIndex(blockHash string, index int)
 
 // GetTransactionByBlockNumberAndIndex returns information about a transaction by block hash and transaction index position.
 func (nc *Client) GetTransactionByBlockNumberAndIndex(blockNumber int, index int) (transaction *Transaction, err error) {
-	rpcReq := NewRPCRequest("getTransactionByBlockNumberAndIndex", []interface{}{
+	rpcResp, err := nc.Call("getTransactionByBlockNumberAndIndex", []interface{}{
 		blockNumber, index,
 	})
-
-	// Make JSON-RPC call
-	rpcResp, err := nc.RawCall(rpcReq)
 	if err != nil {
 		return nil, err
 	}
 
 	// Unmarshal result
 	var result Transaction
-	err = json.Unmarshal(rpcResp.Result, &result)
+	err = rpcResp.GetObject(&result)
 	if err != nil {
 		return nil, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
@@ -321,14 +315,14 @@ func (nc *Client) GetTransactionByBlockNumberAndIndex(blockNumber int, index int
 
 // GetTransactionByHash Returns the information about a transaction requested by transaction hash.
 func (nc *Client) GetTransactionByHash(transactionHash string) (transaction *Transaction, err error) {
-	rpcResp, err := nc.RawCall(NewRPCRequest("getTransactionByHash", transactionHash))
+	rpcResp, err := nc.Call("getTransactionByHash", transactionHash)
 	if err != nil {
 		return nil, err
 	}
 
 	// Unmarshal result
 	var result Transaction
-	err = json.Unmarshal(rpcResp.Result, &result)
+	err = rpcResp.GetObject(&result)
 	if err != nil {
 		return nil, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
@@ -342,14 +336,14 @@ func (nc *Client) GetTransactionByHash(transactionHash string) (transaction *Tra
 
 // GetTransactionReceipt returns the receipt of a transaction by transaction hash.
 func (nc *Client) GetTransactionReceipt(transactionHash string) (transactionReceipt *TransactionReceipt, err error) {
-	rpcResp, err := nc.RawCall(NewRPCRequest("getTransactionReceipt", transactionHash))
+	rpcResp, err := nc.Call("getTransactionReceipt", transactionHash)
 	if err != nil {
 		return nil, err
 	}
 
 	// Unmarshal result
 	var result TransactionReceipt
-	err = json.Unmarshal(rpcResp.Result, &result)
+	err = rpcResp.GetObject(&result)
 	if err != nil {
 		return nil, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
@@ -365,19 +359,16 @@ func (nc *Client) GetTransactionReceipt(transactionHash string) (transactionRece
 // The array will not contain more than maxEntries, but might contain less, even when more transactions happened.
 // Any interpretation of the length of this array might result in worng assumptions.
 func (nc *Client) GetTransactionsByAddress(address string, maxEntries int) (transactions []Transaction, err error) {
-	rpcReq := NewRPCRequest("getTransactionsByAddress", []interface{}{
+	rpcResp, err := nc.Call("getTransactionsByAddress", []interface{}{
 		address, maxEntries,
 	})
-
-	// Make JSON-RPC call
-	rpcResp, err := nc.RawCall(rpcReq)
 	if err != nil {
 		return nil, err
 	}
 
 	// Unmarshal result
 	var result []Transaction
-	err = json.Unmarshal(rpcResp.Result, &result)
+	err = rpcResp.GetObject(&result)
 	if err != nil {
 		return nil, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
@@ -389,14 +380,14 @@ func (nc *Client) GetTransactionsByAddress(address string, maxEntries int) (tran
 // Optional arameters: (1)  The address to use as a miner for this block. This overrides the address provided during startup or from the pool.
 // and (2) Hex-encoded value for the extra data field. This overrides the address provided during startup or from the pool
 func (nc *Client) GetWork(params ...interface{}) (work *Work, err error) {
-	rpcResp, err := nc.RawCall(NewRPCRequest("getWork", params))
+	rpcResp, err := nc.Call("getWork", params)
 	if err != nil {
 		return nil, err
 	}
 
 	// Unmarshal result
 	var result Work
-	err = json.Unmarshal(rpcResp.Result, &result)
+	err = rpcResp.GetObject(&result)
 	if err != nil {
 		return nil, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
@@ -410,14 +401,14 @@ func (nc *Client) GetWork(params ...interface{}) (work *Work, err error) {
 
 // Hashrate returns the number of hashes per second that the node is mining with.
 func (nc *Client) Hashrate() (hashrate float64, err error) {
-	rpcResp, err := nc.RawCall(NewRPCRequest("hashrate", nil))
+	rpcResp, err := nc.Call("hashrate", nil)
 	if err != nil {
 		return 0, err
 	}
 
 	// Unmarshal result
 	var result float64
-	err = json.Unmarshal(rpcResp.Result, &result)
+	err = rpcResp.GetObject(&result)
 	if err != nil {
 		return 0, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
@@ -427,16 +418,16 @@ func (nc *Client) Hashrate() (hashrate float64, err error) {
 
 // Log sets the log level of the node.
 func (nc *Client) Log(tag string, level LogLevel) (succes bool, err error) {
-	rpcResp, err := nc.RawCall(NewRPCRequest("log", []interface{}{
+	rpcResp, err := nc.Call("log", []interface{}{
 		tag, level,
-	}))
+	})
 	if err != nil {
 		return false, err
 	}
 
 	// Unmarshal result
 	var result bool
-	err = json.Unmarshal(rpcResp.Result, &result)
+	err = rpcResp.GetObject(&result)
 	if err != nil {
 		return false, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
@@ -448,14 +439,14 @@ func (nc *Client) Log(tag string, level LogLevel) (succes bool, err error) {
 // This will provide an overview of the number of transactions sorted into buckets
 // based on their fee per byte (in smallest unit).
 func (nc *Client) Mempool() (mempool *Mempool, err error) {
-	rpcResp, err := nc.RawCall(NewRPCRequest("mempool", nil))
+	rpcResp, err := nc.Call("mempool", nil)
 	if err != nil {
 		return nil, err
 	}
 
 	// Unmarshal result
 	var result Mempool
-	err = json.Unmarshal(rpcResp.Result, &result)
+	err = rpcResp.GetObject(&result)
 	if err != nil {
 		return nil, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
@@ -469,14 +460,14 @@ func (nc *Client) Mempool() (mempool *Mempool, err error) {
 
 // Mining returns if client is actively mining new blocks.
 func (nc *Client) Mining() (status bool, err error) {
-	rpcResp, err := nc.RawCall(NewRPCRequest("mining", nil))
+	rpcResp, err := nc.Call("mining", nil)
 	if err != nil {
 		return false, err
 	}
 
 	// Unmarshal result
 	var result bool
-	err = json.Unmarshal(rpcResp.Result, &result)
+	err = rpcResp.GetObject(&result)
 	if err != nil {
 		return false, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
@@ -486,14 +477,14 @@ func (nc *Client) Mining() (status bool, err error) {
 
 // PeerCount returns number of peers currently connected to the client.
 func (nc *Client) PeerCount() (peers int, err error) {
-	rpcResp, err := nc.RawCall(NewRPCRequest("peerCount", nil))
+	rpcResp, err := nc.Call("peerCount", nil)
 	if err != nil {
 		return 0, err
 	}
 
 	// Unmarshal result
 	var result int
-	err = json.Unmarshal(rpcResp.Result, &result)
+	err = rpcResp.GetObject(&result)
 	if err != nil {
 		return 0, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
@@ -503,14 +494,14 @@ func (nc *Client) PeerCount() (peers int, err error) {
 
 // PeerList returns a list of peers currently connected to the client
 func (nc *Client) PeerList() (peers []Peer, err error) {
-	rpcResp, err := nc.RawCall(NewRPCRequest("peerList", nil))
+	rpcResp, err := nc.Call("peerList", nil)
 	if err != nil {
 		return []Peer{}, err
 	}
 
 	// Unmarshal result
 	var result []Peer
-	err = json.Unmarshal(rpcResp.Result, &result)
+	err = rpcResp.GetObject(&result)
 	if err != nil {
 		return []Peer{}, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
@@ -527,14 +518,14 @@ func (nc *Client) PeerState(peerAddress string, update ...string) (peer *Peer, e
 			params = append(params, update[0])
 		}
 	}
-	rpcResp, err := nc.RawCall(NewRPCRequest("peerState", params))
+	rpcResp, err := nc.Call("peerState", params)
 	if err != nil {
 		return nil, err
 	}
 
 	// Unmarshal result
 	var result Peer
-	err = json.Unmarshal(rpcResp.Result, &result)
+	err = rpcResp.GetObject(&result)
 	if err != nil {
 		return nil, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
@@ -544,14 +535,14 @@ func (nc *Client) PeerState(peerAddress string, update ...string) (peer *Peer, e
 
 // SendRawTransaction sends a signed message call transaction or a contract creation, if the data field contains code.
 func (nc *Client) SendRawTransaction(signedTransaction string) (transactionHash string, err error) {
-	rpcResp, err := nc.RawCall(NewRPCRequest("sendRawTransaction", signedTransaction))
+	rpcResp, err := nc.Call("sendRawTransaction", signedTransaction)
 	if err != nil {
 		return "", err
 	}
 
 	// Unmarshal result
 	var result string
-	err = json.Unmarshal(rpcResp.Result, &result)
+	err = rpcResp.GetObject(&result)
 	if err != nil {
 		return "", fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 	}
@@ -561,12 +552,12 @@ func (nc *Client) SendRawTransaction(signedTransaction string) (transactionHash 
 
 // SendTransaction creates new message call transaction or a contract creation, if the data field contains code.
 func (nc *Client) SendTransaction(trn OutgoingTransaction) (transactionHash string, err error) {
-	rpcResp, err := nc.RawCall(NewRPCRequest("sendTransaction", trn))
+	rpcResp, err := nc.Call("sendTransaction", trn)
 	if err != nil {
 		return "", err
 	}
 
-	err = json.Unmarshal(rpcResp.Result, &transactionHash)
+	err = rpcResp.GetObject(&transactionHash)
 	return
 }
 
@@ -574,23 +565,23 @@ func (nc *Client) SendTransaction(trn OutgoingTransaction) (transactionHash stri
 // The argument is a hex-encoded full block (including header, interlink and body).
 // When submitting work from getWork, remember to include the suffix.
 func (nc *Client) SubmitBlock(fullBlock string) (err error) {
-	_, err = nc.RawCall(NewRPCRequest("submitBlock", fullBlock))
+	_, err = nc.Call("submitBlock", fullBlock)
 	return
 }
 
 // Syncing returns whether the node is syncing and when it is syncing, data about the sync status.
 func (nc *Client) Syncing() (syncing bool, syncStatus *SyncStatus, err error) {
-	rpcResp, err := nc.RawCall(NewRPCRequest("syncing", nil))
+	rpcResp, err := nc.Call("syncing", nil)
 	if err != nil {
 		return false, nil, err
 	}
 
 	// Unmarshal result
 	var result SyncStatus
-	err = json.Unmarshal(rpcResp.Result, &result)
+	err = rpcResp.GetObject(&result)
 	if err != nil {
 		var boolResult bool
-		err = json.Unmarshal(rpcResp.Result, &boolResult)
+		err = rpcResp.GetObject(&boolResult)
 		if err != nil {
 			return false, nil, fmt.Errorf("%v: %v", ErrResultUnexpected, err)
 		}
