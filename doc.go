@@ -16,9 +16,12 @@
 
 Package nimiqrpc provides a Nimiq RPC client library in Go.
 
-This client library uses the JSON-RPC protocol and implements the Nimiq RPC specification
+This client library implements the Nimiq RPC specification
 Which can be found here: https://github.com/nimiq/core-js/wiki/JSON-RPC-API#remotejs-client
 This package provides a Client and all the necessary types to interact with the Nimiq RPC server.
+
+This client uses the jsonrpc library to handle JSON-RPC 2.0 requests and responses. For more information
+about this library see the documentation https://godoc.org/github.com/ybbus/jsonrpc
 
 How to use this package:
 

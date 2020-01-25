@@ -76,10 +76,11 @@ func (nc *Client) Call(method string, params interface{}) (*jsonrpc.RPCResponse,
 // advanced use cases.
 //
 // Most convenient is to use the following form:
-// CallBatch(
-//   NewRequest("hashrate"),
-//   NewRequest("accounts"),
-// })
+//
+//   CallBatch(
+//     NewRequest("hashrate"),
+//     NewRequest("accounts"),
+//   })
 //
 // Returns jsonrpc.RPCResponses that is of type []*jsonrpc.RPCResponse
 // - note that a list of RPCResponses can be received unordered so it can happen that: responses[i] != responses[i].ID
